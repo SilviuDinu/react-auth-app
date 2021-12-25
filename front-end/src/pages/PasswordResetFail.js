@@ -2,7 +2,7 @@ import { useHistory } from 'react-router-dom';
 
 export const PasswordResetFail = (props) => {
   const history = useHistory();
-  const { text = 'Something went wrong while trying to reset your password', title } = props;
+  const { text = 'Something went wrong while trying to reset your password' } = props;
 
   return (
     <div className="content-container">

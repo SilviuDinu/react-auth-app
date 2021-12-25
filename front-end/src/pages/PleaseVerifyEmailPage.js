@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 
 export const PleaseVerifyEmailPage = () => {
@@ -15,7 +15,7 @@ export const PleaseVerifyEmailPage = () => {
       <h1>Thanks for signing up!</h1>
       <p>
         A verification email has been sent to the email address you provided. 
-        Please verifiy your email in order to unlock all site features.
+        Please verify your email in order to unlock all site features.
       </p>
     </div>
   );

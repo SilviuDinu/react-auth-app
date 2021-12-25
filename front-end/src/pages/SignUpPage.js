@@ -13,14 +13,18 @@ export const SignUpPage = () => {
   const history = useHistory();
 
   const onSignUpClicked = async () => {
-    const response = await axios.post('/api/signup', {
-      email: emailValue,
-      password: passwordValue,
-    });
+    try {
+      const response = await axios.post('/api/signup', {
+        email: emailValue,
+        password: passwordValue,
+      });
 
-    const { token } = response.data;
-    setToken(token);
-    history.push('/please-verify');
+      const { token } = response.data;
+      setToken(token);
+      history.push('/please-verify');
+    } catch (err) {
+      setErrorMessage(err?.message || err);
+    }
   };
 
   return (

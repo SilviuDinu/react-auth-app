@@ -14,14 +14,17 @@ export const PasswordResetLandingPage = () => {
 
   const { passwordResetCode } = useParams();
 
-  useEffect(async () => {
-    try {
-      await axios.get(`/api/users/${passwordResetCode}/forgot-password/verifiy`);
-      setUrlExpired(false);
-    } catch (err) {
-      console.log(err);
-      setUrlExpired(true);
-    }
+  useEffect(() => {
+    const verifyUrlExpirationDate = async () => {
+      try {
+        await axios.get(`/api/users/${passwordResetCode}/forgot-password/verify`);
+        setUrlExpired(false);
+      } catch (err) {
+        console.log(err);
+        setUrlExpired(true);
+      }
+    };
+    verifyUrlExpirationDate();
   }, [passwordResetCode]);
 
   const onResetClick = async () => {

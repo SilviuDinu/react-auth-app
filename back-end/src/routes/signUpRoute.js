@@ -37,7 +37,7 @@ export const signUpRoute = {
       await sendEmail({
         to: email,
         from: 'slvalx.apps@gmail.com',
-        subject: 'Please verifiy your email address',
+        subject: 'Please verify your email address',
         text: `
           Thanks for signing up! In order to verify your email, please click here:
           http://localhost:3000/verify-email/${emailVerificationString}

@@ -2,7 +2,7 @@ import { getDbConnection } from '../db';
 import { hasUrlExpired } from '../util/hasUrlExpired';
 
 export const checkPasswordResetCodeValidityRoute = {
-  path: '/api/users/:passwordResetCode/forgot-password/verifiy',
+  path: '/api/users/:passwordResetCode/forgot-password/verify',
   method: 'get',
   handler: async (req, res) => {
     const { passwordResetCode } = req.params;
