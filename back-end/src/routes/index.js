@@ -1,3 +1,4 @@
+import { checkPasswordResetCodeValidityRoute } from './checkPasswordResetValidityRoute';
 import { forgotPasswordRoute } from './forgotPasswordRoute';
 import { logInRoute } from './logInRoute';
 import { resetPasswordRoute } from './resetPasswordRoute';
@@ -12,4 +13,5 @@ export const routes = [
   verifyEmailRoute,
   forgotPasswordRoute,
   resetPasswordRoute,
+  checkPasswordResetCodeValidityRoute
 ];

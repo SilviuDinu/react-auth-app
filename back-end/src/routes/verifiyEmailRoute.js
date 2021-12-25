@@ -13,7 +13,7 @@ export const verifyEmailRoute = {
     const result = await db.collection('users').findOne({ emailVerificationString });
 
     if (!result) {
-      return res.result(401).json({ message: 'Email verification code is incorrect' });
+      return res.status(401).json({ message: 'Email verification code is incorrect' });
     }
 
     const { _id: id, info, email } = result;

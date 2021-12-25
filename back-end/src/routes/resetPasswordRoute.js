@@ -1,5 +1,6 @@
 import { getDbConnection } from '../db';
 import bcrypt from 'bcrypt';
+import { hasUrlExpired } from '../util/hasUrlExpired';
 
 export const resetPasswordRoute = {
   path: '/api/users/:passwordResetCode/reset-password',
@@ -10,19 +11,29 @@ export const resetPasswordRoute = {
 
     const db = getDbConnection('react-auth-db');
 
-    const newPasswordHash = await bcrypt.hash(newPassword, 10);
+    const user = await db.collection('users').findOne({ passwordResetCode });
 
-    const result = await db
-      .collection('users')
-      .findOneAndUpdate(
-        { passwordResetCode },
-        { $set: { passwordHash: newPasswordHash }, $unset: { passwordResetCode: '' } }
-      );
-
-    if (result.lastErrorObject.n === 0) {
-      return res.result(404).json({ message: 'No user found with this password reset code' });
+    if (!user) {
+      return res.status(404).json({ message: 'No user found with this password reset code' });
     }
 
-    res.sendStatus(200);
+    if (!hasUrlExpired(user.passwordResetCodeDate)) {
+      const newPasswordHash = await bcrypt.hash(newPassword, 10);
+
+      const result = await db
+        .collection('users')
+        .updateOne(
+          { passwordResetCode },
+          { $set: { passwordHash: newPasswordHash }, $unset: { passwordResetCode: '', passwordResetCodeDate: '' } }
+        );
+
+      res.sendStatus(200);
+    } else {
+      const result = await db
+        .collection('users')
+        .updateOne({ passwordResetCode }, { $unset: { passwordResetCode: '', passwordResetCodeDate: '' } });
+      
+        res.status(403).json({ message: 'Password reset code has expired' });
+    }
   },
 };

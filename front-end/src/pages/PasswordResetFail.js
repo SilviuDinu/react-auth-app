@@ -1,12 +1,13 @@
 import { useHistory } from 'react-router-dom';
 
-export const PasswordResetFail = () => {
+export const PasswordResetFail = (props) => {
   const history = useHistory();
+  const { text = 'Something went wrong while trying to reset your password', title } = props;
 
   return (
     <div className="content-container">
       <h1>Uh oh...</h1>
-      <p>Something went wrong while trying to reset your password</p>
+      <p>{text}</p>
       <button onClick={() => history.push('/login')}>Back to Login</button>
     </div>
   );
