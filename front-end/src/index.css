@@ -20,7 +20,7 @@ hr {
     margin: 32px 0;
 }
 
-button, input {
+button, input, select {
     border-radius: 8px;
     box-sizing: border-box;
     display: block;

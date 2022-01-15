@@ -1,6 +1,7 @@
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import { PrivateRoute } from './auth/PrivateRoute';
 import { EmailVerificationLandingPage } from './pages/EmailVerificationLandingPage';
+import { ExpensesPage } from './pages/ExpensesPage';
 import { ForgotPasswordPage } from './pages/ForgotPasswordPage';
 import { LogInPage } from './pages/LogInPage';
 import { PasswordResetLandingPage } from './pages/PasswordResetLandingPage';
@@ -12,8 +13,11 @@ export const Routes = () => {
   return (
     <Router>
       <Switch>
-        <PrivateRoute path="/" exact>
+        <PrivateRoute path="/userinfo" exact>
           <UserInfoPage />
+        </PrivateRoute>
+        <PrivateRoute path="/" exact>
+          <ExpensesPage />
         </PrivateRoute>
         <Route path="/login" exact>
           <LogInPage />
