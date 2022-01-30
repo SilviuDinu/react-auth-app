@@ -24,7 +24,7 @@ const expenses = [
   'medicamente sau ingrijire',
 ];
 
-export const ExpensesPage = () => {
+const AddExpensesPage = () => {
   const history = useHistory();
   const user = useUser();
   const [token, setToken] = useToken();
@@ -75,7 +75,7 @@ export const ExpensesPage = () => {
   return (
     <div className="content-container">
       <h1>Hello {email}</h1>
-      <h2>Luna {date.format('MMMM YYYY')}</h2>
+      <h2>{date.format('MMMM YYYY')}</h2>
       {!isVerified && <div className="fail">You won't be able to make any changes until you verify your email.</div>}
       {showSuccessMessage && <div className="success">Successfully saved record!</div>}
       {showErrorMessage && <div className="fail">Uh oh... something went wrong and we couldn't save changes</div>}
@@ -115,3 +115,5 @@ export const ExpensesPage = () => {
     </div>
   );
 };
+
+export default AddExpensesPage;

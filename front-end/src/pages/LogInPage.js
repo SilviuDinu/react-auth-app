@@ -20,7 +20,7 @@ export const LogInPage = () => {
 
       const { token } = response.data;
       setToken(token);
-      history.push('/');
+      history.push('/dashboard');
       setErrorMessage('');
     } catch (err) {
       setErrorMessage(err.message);
@@ -28,13 +28,14 @@ export const LogInPage = () => {
   };
 
   return (
-    <div className="content-container">
+    <div className="login-container">
       <h1>Log In</h1>
       {errorMessage && <div className="fail">{errorMessage}</div>}
       <input
         type="text"
         placeholder="someone@gmail.com"
         value={emailValue}
+        autoComplete="on"
         onChange={(e) => setEmailValue(e.target.value)}
       />
       <input

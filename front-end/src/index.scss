@@ -1,0 +1,95 @@
+@import './App.scss';
+@import '../src/components/Sidenav/Sidenav.scss';
+@import './fonts.scss';
+
+* {
+  font-family: 'museo-sans', sans-serif;
+}
+
+body {
+  margin: 0;
+  font-family: 'museo-sans', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
+}
+
+h1 {
+  text-align: center;
+}
+
+hr {
+  margin: 32px 0;
+}
+
+button,
+input,
+select {
+  border-radius: 8px;
+  box-sizing: border-box;
+  display: block;
+  font-size: 16px;
+  margin: 8px 0;
+  padding: 8px;
+  width: 100%;
+}
+
+input {
+  border: 1px solid black;
+}
+
+button {
+  border: 1px solid black;
+  cursor: pointer;
+}
+
+.login-container {
+  background-color: white;
+  /* box-shadow: 4px 2px 2px lightgray; */
+  border-radius: 8px;
+  min-width: 300px;
+  max-width: 800px;
+  padding: 32px;
+}
+
+.page-container {
+  display: flex;
+  background: #b92b27; /* fallback for old browsers */
+  background: -webkit-linear-gradient(to right, #1565c0, #b92b27); /* Chrome 10-25, Safari 5.1-6 */
+  background: linear-gradient(
+    to right,
+    #1565c0,
+    #b92b27
+  ); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+  min-height: 100vh;
+  min-width: 100%;
+  align-items: center;
+  justify-content: center;
+}
+
+.content-container {
+  background-color: white;
+  border-radius: 8px;
+  min-width: 300px;
+  max-width: 800px;
+  padding: 32px;
+}
+
+.success {
+  background-color: #90ee90;
+  border-radius: 8px;
+  margin-bottom: 8px;
+  padding: 16px;
+  text-align: center;
+}
+
+.fail {
+  background-color: #ffcccb;
+  border-radius: 8px;
+  margin-bottom: 8px;
+  padding: 16px;
+  text-align: center;
+}

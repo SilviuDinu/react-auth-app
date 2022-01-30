@@ -13,6 +13,14 @@
   }
 }
 
+.dashboard-content {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 64px;
+  padding: 32px;
+}
+
 .App-header {
   background-color: #282c34;
   min-height: 100vh;

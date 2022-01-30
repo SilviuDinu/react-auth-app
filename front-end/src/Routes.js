@@ -1,9 +1,11 @@
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import { PrivateRoute } from './auth/PrivateRoute';
+import { Dashboard } from './pages/Dashboard';
 import { EmailVerificationLandingPage } from './pages/EmailVerificationLandingPage';
-import { ExpensesPage } from './pages/ExpensesPage';
+import AddExpensesPage from './pages/AddExpensesPage';
 import { ForgotPasswordPage } from './pages/ForgotPasswordPage';
 import { LogInPage } from './pages/LogInPage';
+import { NotFoundPage } from './pages/NotFoundPage';
 import { PasswordResetLandingPage } from './pages/PasswordResetLandingPage';
 import { PleaseVerifyEmailPage } from './pages/PleaseVerifyEmailPage';
 import { SignUpPage } from './pages/SignUpPage';
@@ -13,11 +15,20 @@ export const Routes = () => {
   return (
     <Router>
       <Switch>
-        <PrivateRoute path="/userinfo" exact>
+        <PrivateRoute path="/dashboard" exact>
+          <Dashboard />
+        </PrivateRoute>
+        <PrivateRoute path="/dashboard/add-expense" exact>
+          <AddExpensesPage />
+        </PrivateRoute>
+        <PrivateRoute path="/dashboard/userinfo" exact>
           <UserInfoPage />
         </PrivateRoute>
-        <PrivateRoute path="/" exact>
-          <ExpensesPage />
+        <PrivateRoute path="/dashboard/share-expense" exact>
+          <h1>Share expense page</h1>
+        </PrivateRoute>
+        <PrivateRoute path="/dashboard/add-expense-category" exact>
+          <h1>Add expense category page</h1>
         </PrivateRoute>
         <Route path="/login" exact>
           <LogInPage />
@@ -36,6 +47,9 @@ export const Routes = () => {
         </Route>
         <Route path="/reset-password/:passwordResetCode" exact>
           <PasswordResetLandingPage />
+        </Route>
+        <Route>
+          <NotFoundPage />
         </Route>
       </Switch>
     </Router>

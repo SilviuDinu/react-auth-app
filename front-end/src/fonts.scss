@@ -1,0 +1,38 @@
+@font-face {
+  font-family: museo-sans;
+  src: local('museo-sans'), local('MuseoSans'), local('Museo Sans'), url('./assets/fonts/museo-sans.otf') format('opentype');
+  font-display: swap;
+}
+
+@font-face {
+  font-family: museo-sans;
+  font-weight: 300;
+  src: local('museo-sans'), local('MuseoSans'), local('Museo Sans'), url('./assets/fonts/museo-sans-300.otf') format('opentype');
+  font-display: swap;
+}
+
+@font-face {
+  font-family: museo-sans;
+  font-weight: 500;
+  src: local('museo-sans'), local('MuseoSans'), local('MuseoSans_500'), local('Museo Sans 500'), url('./assets/fonts/MuseoSans_500.otf') format('opentype');
+  font-display: swap;
+}
+
+@font-face {
+  font-family: museo-sans;
+  font-weight: 700;
+  src: local('museo-sans'), local('MuseoSans'), local('Museo Sans'), url('./assets/fonts/MuseoSans_700.otf') format('opentype');
+  font-display: swap;
+}
+
+@font-face {
+  font-family: brandon-grotesque;
+  src: local('brandon-grotesque'), local('MuseoSans'), local('Museo Sans'), url('./assets/fonts/brandon-grotesque-medium.otf') format('opentype');
+  font-display: swap;
+}
+
+@font-face {
+  font-family: brandon-light;
+  src: local('Brandon-light'), local('MuseoSans'), local('Museo Sans'), url('./assets/fonts/Brandon_light.otf') format('opentype');
+  font-display: swap;
+}
