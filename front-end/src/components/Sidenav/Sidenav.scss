@@ -1,7 +1,33 @@
+@import '../../fonts.scss';
+
 .menu-item {
   height: 60px;
 }
 
-* {
-  font-family: 'museo-sans-500', sans-serif;
+.MuiListItemText-root .MuiTypography-root {
+  font-family: 'museo-sans', sans-serif;
+}
+
+.MuiToolbar-root {
+  &.logo-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  &.header-wrapper {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+
+    input {
+      width: 250px;
+    }
+  }
+}
+
+.logo-area {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }

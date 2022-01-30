@@ -7,7 +7,7 @@ export const EmailVerificationSuccess = () => {
     <div className="content-container">
       <h1>Success!</h1>
       <p>Thanks for verifiying your email ❤️</p>
-      <button onClick={() => history.push('/')}>Go to homepage</button>
+      <button onClick={() => history.push('/dashboard')}>Go to homepage</button>
     </div>
   );
 };

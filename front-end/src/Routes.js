@@ -48,9 +48,9 @@ export const Routes = () => {
         <Route path="/reset-password/:passwordResetCode" exact>
           <PasswordResetLandingPage />
         </Route>
-        <Route>
+        <PrivateRoute>
           <NotFoundPage />
-        </Route>
+        </PrivateRoute>
       </Switch>
     </Router>
   );

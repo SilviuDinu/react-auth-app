@@ -8,6 +8,7 @@ export const SignUpPage = () => {
   const [errorMessage, setErrorMessage] = useState('');
   const [emailValue, setEmailValue] = useState('');
   const [passwordValue, setPasswordValue] = useState('');
+  const [userName, setUserName] = useState('');
   const [confirmPasswordValue, setConfirmPasswordValue] = useState('');
 
   const history = useHistory();
@@ -17,6 +18,7 @@ export const SignUpPage = () => {
       const response = await axios.post('/api/signup', {
         email: emailValue,
         password: passwordValue,
+        userName: userName || emailValue.split('@')[0],
       });
 
       const { token } = response.data;
@@ -35,7 +37,15 @@ export const SignUpPage = () => {
         type="text"
         placeholder="someone@gmail.com"
         value={emailValue}
+        autoComplete="on"
         onChange={(e) => setEmailValue(e.target.value)}
+      />
+      <input
+        type="text"
+        placeholder={emailValue.split('@')[0] || 'StarDestroyer123'}
+        value={userName}
+        autoComplete="on"
+        onChange={(e) => setUserName(e.target.value)}
       />
       <input
         type="password"

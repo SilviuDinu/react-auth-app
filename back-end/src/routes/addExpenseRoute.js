@@ -1,6 +1,9 @@
 import { getDbConnection } from '../db';
 import jwt from 'jsonwebtoken';
 import moment from 'moment';
+import { v4 as uuid } from 'uuid';
+import { nanoid } from 'nanoid';
+import { ObjectID } from 'mongodb';
 
 export const addExpenseRoute = {
   path: '/api/expenses/:userId/add-new',
@@ -37,20 +40,36 @@ export const addExpenseRoute = {
       const month = date.format('MMMM');
       const year = date.year();
       const prettyDate = date.format('LL');
+      const expenseId = uuid() + nanoid();
 
       const db = getDbConnection('react-auth-db');
-      const result = await db.collection('expenses').findOneAndUpdate(
-        { month: month, year: year },
+      const result = await db.collection('users').findOneAndUpdate(
+        { _id: ObjectID(userId) },
         {
-          $setOnInsert: { day, month, year, date, prettyDate },
-          $set: { lastUpdated: date, lastUpdatedPretty: prettyDate },
-          $push: { expenses: { amount, who, type } },
+          $push: {
+            expenses: {
+              id: expenseId,
+              amount,
+              who,
+              type,
+              day,
+              month,
+              year,
+              date,
+              prettyDate,
+              sharedBy: null,
+              sharedWith: null,
+              sharingPending: false,
+              sharingCode: null,
+              sharingAccepted: false,
+            },
+          },
         },
         { returnOriginal: false, upsert: true }
       );
 
       if (result.ok && result.value) {
-        res.status(200).json({ entry: result.value });
+        res.status(200).json({ status: 'success' });
         return;
       }
 

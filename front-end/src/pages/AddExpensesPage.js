@@ -25,9 +25,8 @@ const expenses = [
 ];
 
 const AddExpensesPage = () => {
-  const history = useHistory();
   const user = useUser();
-  const [token, setToken] = useToken();
+  const [token] = useToken();
 
   const { id, email, isVerified } = user;
 
@@ -65,11 +64,6 @@ const AddExpensesPage = () => {
     } catch (err) {
       setShowErrorMessage(true);
     }
-  };
-
-  const logOut = () => {
-    localStorage.removeItem('token');
-    history.push('/login');
   };
 
   return (
@@ -111,7 +105,6 @@ const AddExpensesPage = () => {
       <button disabled={!amount || !date || !who || !expenseType} onClick={saveChanges}>
         Save Changes
       </button>
-      <button onClick={logOut}>Log Out</button>
     </div>
   );
 };

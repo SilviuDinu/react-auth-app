@@ -6,7 +6,7 @@ export const PleaseVerifyEmailPage = () => {
 
   useEffect(() => {
     setTimeout(() => {
-      history.push('/');
+      history.push('/dashboard');
     }, 3500);
   }, [history]);
 

@@ -3,6 +3,7 @@ import { checkPasswordResetCodeValidityRoute } from './checkPasswordResetValidit
 import { forgotPasswordRoute } from './forgotPasswordRoute';
 import { logInRoute } from './logInRoute';
 import { resetPasswordRoute } from './resetPasswordRoute';
+import { shareExpenseWithRoute } from './shareExpenseWithRoute';
 import { signUpRoute } from './signUpRoute';
 import { updateUserInfoRoute } from './updateUserInfoRoute';
 import { verifyEmailRoute } from './verifiyEmailRoute';
@@ -15,5 +16,6 @@ export const routes = [
   forgotPasswordRoute,
   resetPasswordRoute,
   checkPasswordResetCodeValidityRoute,
-  addExpenseRoute
+  addExpenseRoute,
+  shareExpenseWithRoute
 ];

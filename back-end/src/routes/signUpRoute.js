@@ -3,12 +3,13 @@ import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import { v4 as uuid } from 'uuid';
 import { sendEmail } from '../util/sendEmail';
+import moment from 'moment';
 
 export const signUpRoute = {
   path: '/api/signup',
   method: 'post',
   handler: async (req, res) => {
-    const { email, password } = req.body;
+    const { email, password, userName } = req.body;
 
     const db = getDbConnection('react-auth-db');
     const user = await db.collection('users').findOne({ email });
@@ -27,9 +28,18 @@ export const signUpRoute = {
       bio: '',
     };
 
-    const result = await db
-      .collection('users')
-      .insertOne({ email, passwordHash, info: startingInfo, isVerified: false, emailVerificationString });
+    const month = moment().format('MMMM');
+    const year = moment().year();
+
+    const result = await db.collection('users').insertOne({
+      email,
+      userName,
+      passwordHash,
+      info: startingInfo,
+      isVerified: false,
+      emailVerificationString,
+      expenses: [],
+    });
 
     const { insertedId } = result;
 

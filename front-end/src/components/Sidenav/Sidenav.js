@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import CssBaseline from '@mui/material/CssBaseline';
-import Divider from '@mui/material/Divider';
 import Drawer from '@mui/material/Drawer';
 import IconButton from '@mui/material/IconButton';
 import List from '@mui/material/List';
@@ -11,6 +10,7 @@ import ListItem from '@mui/material/ListItem';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import Toolbar from '@mui/material/Toolbar';
+import Divider from '@mui/material/Divider';
 import Typography from '@mui/material/Typography';
 import { useState } from 'react';
 import { menuItems } from '../../constants/menu-items';
@@ -34,19 +34,36 @@ const Sidenav = React.memo((props) => {
     setMobileOpen(!mobileOpen);
   };
 
+  const logOut = () => {
+    localStorage.removeItem('token');
+    history.push('/login');
+  };
+
   const drawer = (
     <div>
-      <Toolbar />
+      <Toolbar className="logo-wrapper">
+        <div className="logo-area">
+          <img src={require('../../assets/images/logo192.png').default} alt="Logo" width={45} />
+        </div>
+      </Toolbar>
       <Divider />
       <List>
-        {menuItems.map((item, index) => (
-          <ListItem button key={index} className="menu-item" onClick={() => history.push(item.link || '#')}>
-            <ListItemIcon> {item.icon} </ListItemIcon>
-            <ListItemText primary={item.title} />
-          </ListItem>
+        {menuItems.map((category, categoryIdx) => (
+          <div key={categoryIdx}>
+            {category.map((item, itemIdx) => (
+              <ListItem
+                button
+                className="menu-item"
+                key={itemIdx}
+                onClick={() => (!item.isLogOut ? history.push(item.link || '#') : logOut())}>
+                <ListItemIcon> {item.icon} </ListItemIcon>
+                <ListItemText primary={item.title} />
+              </ListItem>
+            ))}
+            <Divider />
+          </div>
         ))}
       </List>
-      <Divider />
     </div>
   );
 
@@ -61,7 +78,7 @@ const Sidenav = React.memo((props) => {
           width: { sm: `calc(100% - ${drawerWidth}px)` },
           ml: { sm: `${drawerWidth}px` },
         }}>
-        <Toolbar>
+        <Toolbar className="header-wrapper">
           <IconButton
             color="inherit"
             aria-label="open drawer"
@@ -70,9 +87,7 @@ const Sidenav = React.memo((props) => {
             sx={{ mr: 2, display: { sm: 'none' } }}>
             <MenuIcon />
           </IconButton>
-          <Typography variant="h6" noWrap component="div">
-            Responsive drawer
-          </Typography>
+          <input type="text" placeholder="Search for something..." />
         </Toolbar>
       </AppBar>
       <Box component="nav" sx={{ width: { sm: drawerWidth }, flexShrink: { sm: 0 } }} aria-label="mailbox folders">
@@ -111,7 +126,6 @@ const Sidenav = React.memo((props) => {
           {drawer}
         </Drawer>
       </Box>
-      <Box component="main" sx={{ flexGrow: 1, p: 3, width: { sm: `calc(100% - ${drawerWidth}px)` } }}></Box>
     </Box>
   );
 });

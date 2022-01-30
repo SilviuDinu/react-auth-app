@@ -5,7 +5,7 @@ import Sidenav from '../components/Sidenav/Sidenav';
 export const PrivateRoute = (props) => {
   const user = useUser();
 
-  if (!user) {
+if (!user) {
     return <Redirect to="/login" />;
   }
 
@@ -13,7 +13,7 @@ export const PrivateRoute = (props) => {
     <>
       <Sidenav />
       <div className="dashboard-content">
-        <Route {...props} />;
+        <Route {...props} />
       </div>
     </>
   );
