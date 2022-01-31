@@ -11,8 +11,10 @@ const ExpenseCategory = (props) => {
     <div className="expense-category">
       <div className="expense-category-summary">
         <div className="expense-category-summary-info">
-          <h3>Category: {category}</h3>
-          <h3>Total: {expenses.reduce((acc, item) => (acc += parseFloat(item.amount)), 0)} RON</h3>
+          <span className="expense-category-field">Category: {category}</span>
+          <span className="expense-category-field">
+            Total: {expenses.reduce((acc, item) => (acc += parseFloat(item.amount)), 0)} RON
+          </span>
         </div>
         <button onClick={() => setShowExpenses(!showExpenses)}>{showExpenses ? 'Hide details' : 'Show details'}</button>
       </div>
@@ -21,16 +23,13 @@ const ExpenseCategory = (props) => {
         <div className="expense-category-details">
           {expenses
             .sort((a, b) => {
-              const { date: dateA } = a;
-              const { date: dateB } = b;
-              console.log(moment(dateA));
-              // return moment(a?.prettyDate).diff(moment(b?.prettyDate));
+              return moment(b.date._d).diff(a.date._d, 'seconds');
             })
             .map((expense, index) => (
-              <>
-                <ExpenseCard key={index} expense={expense} />
+              <div key={index}>
+                <ExpenseCard expense={expense} />
                 {index < expenses.length - 1 && <Divider />}
-              </>
+              </div>
             ))}
         </div>
       )}

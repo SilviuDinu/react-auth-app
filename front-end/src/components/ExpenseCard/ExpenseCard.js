@@ -6,17 +6,17 @@ const ExpenseCard = (props) => {
   return (
     <div className="expense-card">
       <div className="expense-card-info">
-        <h3>{type}</h3>
-        <h3>{amount} RON</h3>
+        <span className="expense-card-field">{type}</span>
+        <span className="expense-card-field">{amount} RON</span>
       </div>
 
       <div className="expense-card-info">
         <div className="expense-card-info-block">
-          <h4>Paid by {who}</h4>
-          {sharedBy && <span>Shared by: {sharedBy.userName}</span>}
+          <span className="expense-card-field">Paid by {who}</span>
+          {sharedBy && <span className="expense-card-field">Shared by: {sharedBy.userName}</span>}
         </div>
 
-        <h3>{prettyDate}</h3>
+        <span className="expense-card-field">{prettyDate}</span>
       </div>
       <div className="expense-card-actions">
         <IosShareIcon color="primary" />

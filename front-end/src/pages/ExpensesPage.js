@@ -16,15 +16,19 @@ const ExpensesPage = (props) => {
     console.log('setExpensesCategories useEffect');
   }, [expenses]);
 
-  if (!expensesCategories?.length) {
+  if (!expensesCategories?.length && expensesCategories?.length !== 0) {
     return <h1>Loading...</h1>;
+  }
+
+  if (expensesCategories?.length === 0) {
+    return <h1>No expenses</h1>;
   }
 
   return (
     <div className="expenses-content">
       {expensesCategories.map((category, index) => {
         const [type, items] = category;
-        return <ExpenseCategory key={index} category={type} expenses={items} />
+        return <ExpenseCategory key={index} category={type} expenses={items} />;
       })}
     </div>
   );
