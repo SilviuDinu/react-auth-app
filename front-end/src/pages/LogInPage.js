@@ -1,6 +1,6 @@
 import axios from 'axios';
 import React, { useState } from 'react';
-import { useHistory } from 'react-router-dom';
+import { useHistory, useLocation } from 'react-router-dom';
 import { useToken } from '../auth/useToken';
 
 export const LogInPage = () => {
@@ -10,6 +10,7 @@ export const LogInPage = () => {
   const [passwordValue, setPasswordValue] = useState('');
 
   const history = useHistory();
+  const location = useLocation();
 
   const onLoginClicked = async () => {
     try {
@@ -20,7 +21,8 @@ export const LogInPage = () => {
 
       const { token } = response.data;
       setToken(token);
-      history.push('/dashboard');
+      const { from } = location.state || { from: { pathname: '/dashboard' } };
+      history.push(from);
       setErrorMessage('');
     } catch (err) {
       setErrorMessage(err.message);

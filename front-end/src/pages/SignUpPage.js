@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import { useToken } from '../auth/useToken';
 import axios from 'axios';
+import { regex } from '../util/validators';
 
 export const SignUpPage = () => {
   const [, setToken] = useToken();
@@ -29,6 +30,15 @@ export const SignUpPage = () => {
     }
   };
 
+  const handleUserNameChange = (e) => {
+    const value = e.target.value;
+    if (regex.alphaNumeric.test(value)) {
+      setUserName(value);
+    } else {
+      setUserName(value.replace(regex.nonAlphaAndUnderscore, ''));
+    }
+  };
+
   return (
     <div className="content-container">
       <h1>Sign Up</h1>
@@ -42,10 +52,10 @@ export const SignUpPage = () => {
       />
       <input
         type="text"
-        placeholder={emailValue.split('@')[0] || 'StarDestroyer123'}
+        placeholder={emailValue?.split('@')[0].replace(regex.nonAlphaAndUnderscore, '') || 'StarDestroyer123'}
         value={userName}
         autoComplete="on"
-        onChange={(e) => setUserName(e.target.value)}
+        onChange={handleUserNameChange}
       />
       <input
         type="password"

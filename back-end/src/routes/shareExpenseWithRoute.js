@@ -43,46 +43,116 @@ export const shareExpenseWithRoute = {
       });
 
       if (!userToShareWith) {
-        res.sendStatus(404).json({ message: 'Could not find specified user' });
+        res.status(404).json({ message: 'Could not find specified user' });
+      }
+
+      if (userToShareWith.expenses.find((item) => item.id === expenseId)) {
+        res.status(409).json({ message: 'Expense already shared with user' });
+        return;
       }
 
       const result = await db.collection('users').findOneAndUpdate(
         { _id: ObjectID(userId), 'expenses.id': expenseId },
         {
           $set: {
-            'expenses.$.sharedWith': { email, id: userToShareWith._id, userName: userToShareWith.userName },
             'expenses.$.sharingPending': true,
             'expenses.$.sharingAccepted': false,
             'expenses.$.sharingCode': sharingCode,
+          },
+          $addToSet: {
+            'expenses.$.sharedWith': { email, id: userToShareWith._id, userName: userToShareWith.userName },
           },
         },
         { returnOriginal: false }
       );
 
       if (result.ok && result.value) {
-        try {
-          await sendEmail({
-            to: email,
-            from: 'slvalx.apps@gmail.com',
-            subject: 'Expense sharing',
-            text: `
-              Hello there,          
-  
-              ${result.value.userName} wants to share an expense with you. \
-              Please click the link below to accept or ignore this email to refuse:
-              
-              cucu
-    
-              Best regards,
-              Silviu
-            `,
-          });
-        } catch (err) {
-          console.log(err);
-          return res.sendStatus(500);
+        const canBypassApproval = !!userToShareWith?.usersWhoCanShareExpensesWithoutApproval?.find(
+          (user) => user.id.toString() === userId
+        );
+
+        if (canBypassApproval) {
+          const { amount, who, type, day, month, year, date, prettyDate } = result.value.expenses.find(
+            (expense) => expense.id === expenseId && expense.sharingCode === sharingCode
+          );
+
+          await db.collection('users').findOneAndUpdate(
+            { _id: ObjectID(userId), 'expenses.id': expenseId },
+            {
+              $set: {
+                'expenses.$.sharingPending': false,
+                'expenses.$.sharingAccepted': true,
+                'expenses.$.sharingCode': null,
+              },
+            },
+            { returnOriginal: false }
+          );
+
+          const sharing = await db.collection('users').findOneAndUpdate(
+            { _id: ObjectID(userToShareWith._id) },
+            {
+              $addToSet: {
+                expenses: {
+                  id: expenseId,
+                  amount,
+                  who,
+                  type,
+                  day,
+                  month,
+                  year,
+                  date,
+                  prettyDate,
+                  sharedBy: {
+                    email: result.value.email,
+                    id: result.value._id,
+                    userName: result.value.userName,
+                  },
+                  sharedWith: null,
+                  sharingPending: false,
+                  sharingCode: null,
+                  sharingAccepted: false,
+                },
+              },
+            },
+            { returnOriginal: false, upsert: true }
+          );
+
+          if (sharing.ok && sharing.value) {
+            res.status(200).json({ status: 'shared successfully' });
+            return;
+          }
+
+          res.status(500).json({ message: 'Could not share expense with the target user' });
+        } else {
+          try {
+            const expenseQueryParams = new URLSearchParams({
+              expenseId,
+              sharingCode,
+              sharedBy: result.value.userName,
+            });
+            await sendEmail({
+              to: email,
+              from: 'slvalx.apps@gmail.com',
+              subject: 'Expense sharing',
+              text: `
+                Hello there,
+
+                ${result.value.userName} (${result.value.email}) wants to share an expense with you.
+                Please click the link below to accept or ignore this email to refuse:
+
+                http://localhost:3000/dashboard/accept-expense-sharing${expenseQueryParams.toString()}
+
+                Best regards,
+                Silviu
+              `,
+            });
+          } catch (err) {
+            console.log(err);
+            return res.sendStatus(500);
+          }
+          res.status(200).json({ status: 'shared successfully' });
+          return;
         }
-        res.status(200).json({ status: 'shared successfully' });
-        return;
       }
 
       res.status(500).json({ message: 'Could not find any expense with the specified id' });

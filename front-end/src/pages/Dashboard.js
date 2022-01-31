@@ -1,8 +1,6 @@
 import React from 'react';
-import { useHistory } from 'react-router-dom';
 
 export const Dashboard = () => {
-  const history = useHistory();
 
   return (
     <div className="dashboard">

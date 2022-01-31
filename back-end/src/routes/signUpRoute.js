@@ -12,7 +12,7 @@ export const signUpRoute = {
     const { email, password, userName } = req.body;
 
     const db = getDbConnection('react-auth-db');
-    const user = await db.collection('users').findOne({ email });
+    const user = await db.collection('users').findOne({ $or: [{ email }, { userName }] });
 
     if (user) {
       return res.sendStatus(409);
@@ -38,6 +38,7 @@ export const signUpRoute = {
       info: startingInfo,
       isVerified: false,
       emailVerificationString,
+      usersWhoCanShareExpensesWithoutApproval: [],
       expenses: [],
     });
 

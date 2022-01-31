@@ -10,6 +10,8 @@ import { PasswordResetLandingPage } from './pages/PasswordResetLandingPage';
 import { PleaseVerifyEmailPage } from './pages/PleaseVerifyEmailPage';
 import { SignUpPage } from './pages/SignUpPage';
 import { UserInfoPage } from './pages/UserInfoPage';
+import { AcceptExpenseSharingPage } from './pages/AcceptExpenseSharingPage';
+import ExpensesPage from './pages/ExpensesPage';
 
 export const Routes = () => {
   return (
@@ -24,11 +26,17 @@ export const Routes = () => {
         <PrivateRoute path="/dashboard/userinfo" exact>
           <UserInfoPage />
         </PrivateRoute>
+        <PrivateRoute path="/dashboard/expenses" exact>
+          <ExpensesPage />
+        </PrivateRoute>
         <PrivateRoute path="/dashboard/share-expense" exact>
           <h1>Share expense page</h1>
         </PrivateRoute>
         <PrivateRoute path="/dashboard/add-expense-category" exact>
           <h1>Add expense category page</h1>
+        </PrivateRoute>
+        <PrivateRoute path="/dashboard/accept-expense-sharing" exact>
+          <AcceptExpenseSharingPage />
         </PrivateRoute>
         <Route path="/login" exact>
           <LogInPage />

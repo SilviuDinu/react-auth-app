@@ -1,18 +1,14 @@
 import { getDbConnection } from '../db';
 import jwt from 'jsonwebtoken';
-import moment from 'moment';
-import { v4 as uuid } from 'uuid';
-import { nanoid } from 'nanoid';
 import { ObjectID } from 'mongodb';
 
-export const addExpenseRoute = {
-  path: '/api/expenses/:userId/add-new',
+export const addNewExpenseCategoryRoute = {
+  path: '/api/expenses/:userId/add-expense-category/',
   method: 'put',
   handler: async (req, res) => {
     const { authorization } = req.headers;
     const { userId } = req.params;
-
-    const { date: rawDate, amount, type, who } = req.body;
+    const { title, category } = req.body;
 
     if (!authorization) {
       return res.status(401).json({ message: 'No auth token sent' });
@@ -35,41 +31,23 @@ export const addExpenseRoute = {
         return res.status(403).json({ message: 'You need to verify your email before you can update your data' });
       }
 
-      const date = moment(rawDate);
-      const day = date.date();
-      const month = date.format('MMMM');
-      const year = date.year();
-      const prettyDate = date.format('LL');
-      const expenseId = uuid() + nanoid();
-
       const db = getDbConnection('react-auth-db');
+
       const result = await db.collection('users').findOneAndUpdate(
         { _id: ObjectID(userId) },
         {
-          $addToSet: {
-            expenses: {
-              id: expenseId,
-              amount,
-              who,
-              type,
-              day,
-              month,
-              year,
-              date,
-              prettyDate,
-              sharedBy: null,
-              sharedWith: [],
-              sharingPending: false,
-              sharingCode: null,
-              sharingAccepted: false,
+          $push: {
+            expenseCategories: {
+              title,
+              category,
             },
           },
         },
-        { returnOriginal: false, upsert: true }
+        { returnOriginal: false }
       );
 
       if (result.ok && result.value) {
-        res.status(200).json({ status: 'success' });
+        res.status(200).json({ status: 'successfully added expense category' });
         return;
       }
 

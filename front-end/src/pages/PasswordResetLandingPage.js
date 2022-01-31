@@ -20,7 +20,7 @@ export const PasswordResetLandingPage = () => {
         await axios.get(`/api/users/${passwordResetCode}/forgot-password/verify`);
         setUrlExpired(false);
       } catch (err) {
-        console.log(err);
+        console.log(err.message);
         setUrlExpired(true);
       }
     };

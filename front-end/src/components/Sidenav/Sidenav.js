@@ -23,15 +23,17 @@ const drawerWidth = 275;
 const Sidenav = React.memo((props) => {
   const { window } = props;
   const [mobileOpen, setMobileOpen] = useState(false);
-  const rerenders = useRef(0);
   const history = useHistory();
 
-  useEffect(() => {
-    console.log(rerenders.current++);
-  });
+  const [selected, setSelected] = useState(null);
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
+  };
+
+  const handleMenuItemClick = (item) => {
+    setSelected(item);
+    !item.isLogOut ? history.push(item.link || '#') : logOut();
   };
 
   const logOut = () => {
@@ -53,9 +55,9 @@ const Sidenav = React.memo((props) => {
             {category.map((item, itemIdx) => (
               <ListItem
                 button
-                className="menu-item"
+                className={item.title === selected?.title ? 'menu-item Mui-focusVisible' : 'menu-item'}
                 key={itemIdx}
-                onClick={() => (!item.isLogOut ? history.push(item.link || '#') : logOut())}>
+                onClick={() => handleMenuItemClick(item)}>
                 <ListItemIcon> {item.icon} </ListItemIcon>
                 <ListItemText primary={item.title} />
               </ListItem>
