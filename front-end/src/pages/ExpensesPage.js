@@ -25,7 +25,7 @@ const ExpensesPage = (props) => {
   }
 
   return (
-    <div className="expenses-content">
+    <div className="container">
       {expensesCategories.map((category, index) => {
         const [type, items] = category;
         return <ExpenseCategory key={index} category={type} expenses={items} />;

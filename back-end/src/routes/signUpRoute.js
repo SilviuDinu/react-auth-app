@@ -28,6 +28,10 @@ export const signUpRoute = {
       bio: '',
     };
 
+    const settings = {
+      isPrivateAccount: false,
+    };
+
     const month = moment().format('MMMM');
     const year = moment().year();
 
@@ -36,10 +40,12 @@ export const signUpRoute = {
       userName,
       passwordHash,
       info: startingInfo,
+      settings,
       isVerified: false,
       emailVerificationString,
       usersWhoCanShareExpensesWithoutApproval: [],
       expenses: [],
+      expenseCategories: [],
     });
 
     const { insertedId } = result;
@@ -63,6 +69,7 @@ export const signUpRoute = {
       {
         id: insertedId,
         email,
+        userName,
         info: startingInfo,
         isVerified: false,
       },

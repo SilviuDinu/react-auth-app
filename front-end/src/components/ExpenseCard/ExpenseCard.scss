@@ -1,6 +1,6 @@
 .expense-card-info {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   justify-content: space-between;
 }
 
@@ -22,4 +22,15 @@
 .expense-card-field {
   font-size: 16px;
   margin-top: 8px;
+}
+
+.expense-card-action {
+  cursor: pointer;
+}
+
+.expense-card {
+  background-color: #f1f1f1;
+  padding: 16px;
+  border-radius: 10px;
+  margin-top: 16px;
 }

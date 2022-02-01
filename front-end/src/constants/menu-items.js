@@ -5,6 +5,7 @@ import AddCircleIcon from '@mui/icons-material/AddCircle';
 import BarChartIcon from '@mui/icons-material/BarChart';
 import PersonIcon from '@mui/icons-material/Person';
 import FormatListNumberedIcon from '@mui/icons-material/FormatListNumbered';
+import SettingsIcon from '@mui/icons-material/Settings';
 
 export const menuItems = [
   [
@@ -46,6 +47,11 @@ export const menuItems = [
     },
   ],
   [
+    {
+      title: 'Settings',
+      icon: <SettingsIcon color="primary" />,
+      link: '/dashboard/settings',
+    },
     {
       title: 'Logout',
       icon: <LogoutIcon color="primary" />,

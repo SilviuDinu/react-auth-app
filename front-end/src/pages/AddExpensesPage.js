@@ -67,7 +67,7 @@ const AddExpensesPage = () => {
   };
 
   return (
-    <div className="content-container">
+    <div className="container">
       <h1>Hello {email}</h1>
       <h2>{date.format('MMMM YYYY')}</h2>
       {!isVerified && <div className="fail">You won't be able to make any changes until you verify your email.</div>}
@@ -75,7 +75,7 @@ const AddExpensesPage = () => {
       {showErrorMessage && <div className="fail">Uh oh... something went wrong and we couldn't save changes</div>}
       <label>
         Amount (RON):
-        <input onChange={(e) => setAmount(e.target.value)} value={amount} placeholder="100.00" />
+        <input type="text" onChange={(e) => setAmount(e.target.value)} value={amount} placeholder="100.00" />
       </label>
       <label>
         Expense type / category:

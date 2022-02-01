@@ -2,10 +2,12 @@
 @import '../src/components/Sidenav/Sidenav.scss';
 @import '../src/components/ExpenseCategory/ExpenseCategory.scss';
 @import '../src/components/ExpenseCard/ExpenseCard.scss';
+@import '../src/components/ShareExpenseModal/ShareExpenseModal.scss';
 @import './fonts.scss';
 
 * {
   font-family: 'museo-sans', sans-serif;
+  box-sizing: border-box;
 }
 
 body {
@@ -21,6 +23,7 @@ code {
 
 h1 {
   text-align: center;
+  word-break: break-word;
 }
 
 hr {
@@ -28,7 +31,9 @@ hr {
 }
 
 button,
-input,
+input[type="text"],
+input[type="password"],
+input[type="date"],
 select {
   border-radius: 8px;
   box-sizing: border-box;
@@ -52,7 +57,7 @@ button {
   background-color: white;
   /* box-shadow: 4px 2px 2px lightgray; */
   border-radius: 8px;
-  min-width: 300px;
+  min-width: 375px;
   max-width: 800px;
   padding: 32px;
 }
@@ -73,11 +78,22 @@ button {
 }
 
 .content-container {
-  background-color: white;
   border-radius: 8px;
-  min-width: 300px;
-  max-width: 800px;
+  //   min-width: 300px;
   padding: 32px;
+  //   margin-top: 32px;
+  width: 100%;
+
+  @media screen and (max-width: #{$sm}) {
+      padding: 32px 16px;
+  }
+}
+
+.container {
+    background-color: #fff;
+//   background-color: rgb(11, 12, 34);
+  padding: 32px;
+  border-radius: 8px;
 }
 
 .success {
@@ -94,4 +110,19 @@ button {
   margin-bottom: 8px;
   padding: 16px;
   text-align: center;
+}
+
+.main-wrapper {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: space-between;
+}
+
+.dashboard-content {
+  //   @media screen and (min-width: #{$sm}) {
+  //     margin-left: $sidenav-width;
+  //   }
+  background-color: #f1f1f1;
+  margin-top: 64px;
 }

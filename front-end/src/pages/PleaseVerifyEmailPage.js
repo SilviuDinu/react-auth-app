@@ -11,7 +11,7 @@ export const PleaseVerifyEmailPage = () => {
   }, [history]);
 
   return (
-    <div className="content-container">
+    <div className="container">
       <h1>Thanks for signing up!</h1>
       <p>
         A verification email has been sent to the email address you provided. 

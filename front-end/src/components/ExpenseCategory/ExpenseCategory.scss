@@ -1,13 +1,10 @@
 .expense-category {
-  width: 500px;
-  margin-top: 32px;
-  padding: 16px;
+  width: 100%;
+  margin-top: 32px auto;
   border-radius: 10px;
   display: flex;
   flex-direction: column;
-  // justify-content: space-between;
-  background-color: aliceblue;
-  box-shadow: 1px 2px #000;
+  justify-content: space-between;
 
   .expense-category-summary-info {
     display: flex;
@@ -18,4 +15,12 @@
   .expense-category-field {
     font-size: 16px;
   }
+}
+
+.expenses-content {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
 }

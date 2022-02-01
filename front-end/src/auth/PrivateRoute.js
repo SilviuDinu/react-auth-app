@@ -21,13 +21,15 @@ export const PrivateRoute = (props) => {
   }
 
   return (
-    <>
+    <div className="main-wrapper">
       <Sidenav />
       <ExpensesProvider>
         <div className="dashboard-content">
-          <Route {...props} />
+          <div className="content-container">
+            <Route {...props} />
+          </div>
         </div>
       </ExpensesProvider>
-    </>
+    </div>
   );
 };

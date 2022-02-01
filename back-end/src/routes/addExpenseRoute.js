@@ -55,7 +55,7 @@ export const addExpenseRoute = {
               day,
               month,
               year,
-              date,
+              date: rawDate,
               prettyDate,
               sharedBy: null,
               sharedWith: [],

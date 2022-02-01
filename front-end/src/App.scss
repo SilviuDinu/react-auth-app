@@ -13,12 +13,32 @@
   }
 }
 
+.user-area {
+  min-height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  .user-desktop {
+    color: #fff;
+    font-size: 18px;
+  }
+}
+
+.settings-details {
+  margin-top: 32px;
+  margin-bottom: 32px;
+
+  .setting {
+    margin-top: 8px;
+  }
+}
+
 .dashboard-content {
   display: flex;
   justify-content: center;
-  align-items: center;
-  margin-top: 64px;
-  padding: 32px;
+  align-items: flex-start;
+  width: 100%;
+  min-height: 100%;
 }
 
 .App-header {

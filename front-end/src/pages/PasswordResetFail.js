@@ -5,7 +5,7 @@ export const PasswordResetFail = (props) => {
   const { text = 'Something went wrong while trying to reset your password' } = props;
 
   return (
-    <div className="content-container">
+    <div className="container">
       <h1>Uh oh...</h1>
       <p>{text}</p>
       <button onClick={() => history.push('/login')}>Back to Login</button>

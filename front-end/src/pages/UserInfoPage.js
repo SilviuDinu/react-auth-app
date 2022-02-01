@@ -78,22 +78,22 @@ export const UserInfoPage = () => {
 
   // And here we have the JSX for our component. It's pretty straightforward
   return (
-    <div className="content-container">
+    <div className="container">
       <h1>Info for {email}</h1>
       {!isVerified && <div className="fail">You won't be able to make any changes until you verify your email.</div>}
       {showSuccessMessage && <div className="success">Successfully saved user data!</div>}
       {showErrorMessage && <div className="fail">Uh oh... something went wrong and we couldn't save changes</div>}
       <label>
         Favorite Food:
-        <input onChange={(e) => setFavoriteFood(e.target.value)} value={favoriteFood} />
+        <input type="text" onChange={(e) => setFavoriteFood(e.target.value)} value={favoriteFood} />
       </label>
       <label>
         Hair Color:
-        <input onChange={(e) => setHairColor(e.target.value)} value={hairColor} />
+        <input type="text" onChange={(e) => setHairColor(e.target.value)} value={hairColor} />
       </label>
       <label>
         Bio:
-        <input onChange={(e) => setBio(e.target.value)} value={bio} />
+        <input type="text" onChange={(e) => setBio(e.target.value)} value={bio} />
       </label>
       <hr />
       <button onClick={saveChanges}>Save Changes</button>

@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
+import { BrowserRouter as Router, Redirect, Route, Switch } from 'react-router-dom';
 import { PrivateRoute } from './auth/PrivateRoute';
 import { Dashboard } from './pages/Dashboard';
 import { EmailVerificationLandingPage } from './pages/EmailVerificationLandingPage';
@@ -12,6 +12,7 @@ import { SignUpPage } from './pages/SignUpPage';
 import { UserInfoPage } from './pages/UserInfoPage';
 import { AcceptExpenseSharingPage } from './pages/AcceptExpenseSharingPage';
 import ExpensesPage from './pages/ExpensesPage';
+import SettingsPage from './pages/SettingsPage';
 
 export const Routes = () => {
   return (
@@ -25,6 +26,9 @@ export const Routes = () => {
         </PrivateRoute>
         <PrivateRoute path="/dashboard/userinfo" exact>
           <UserInfoPage />
+        </PrivateRoute>
+        <PrivateRoute path="/dashboard/settings" exact>
+          <SettingsPage />
         </PrivateRoute>
         <PrivateRoute path="/dashboard/expenses" exact>
           <ExpensesPage />
@@ -56,6 +60,7 @@ export const Routes = () => {
         <Route path="/reset-password/:passwordResetCode" exact>
           <PasswordResetLandingPage />
         </Route>
+        <Redirect exact={true} from={'/'} to={'/dashboard'} />
         <PrivateRoute>
           <NotFoundPage />
         </PrivateRoute>

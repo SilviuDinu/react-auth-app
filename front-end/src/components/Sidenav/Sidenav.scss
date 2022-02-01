@@ -1,4 +1,6 @@
 @import '../../fonts.scss';
+@import '../../styles/grid-breakpoints.scss';
+@import '../../styles/variables.scss';
 
 .menu-item {
   height: 60px;
@@ -15,14 +17,64 @@
     align-items: center;
   }
 
+  // .drawer-temporary {
+  //   @media screen and (max-width: #{$sm}) {
+  //     display: block;
+  //   }
+  //   display: none;
+  // }
+
+  // .drawer-permanent {
+  //   @media screen and (min-width: #{$sm}) {
+  //     display: block;
+  //   }
+  //   display: none;
+  // }
+
   &.header-wrapper {
+    min-height: 64px;
     display: flex;
     justify-content: flex-end;
     align-items: center;
-
+    border-bottom: 1px solid $divider-color;
+    color: #000;
+    .sidenav-button {
+      width: 40px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      @media screen and (min-width: #{$xs}) {
+        display: none;
+      }
+    }
     input {
       width: 250px;
     }
+  }
+}
+
+.main-wrapper {
+  display: flex;
+}
+
+.sidenav {
+  display: flex;
+  height: 100vh;
+  overflow: scroll initial;
+
+  .menu-item {
+    // color: #818181;
+    color: #000;
+
+    &:hover {
+      color: #111;
+    }
+  }
+
+  .sidenav-content {
+    display: flex;
+    flex-direction: column;
   }
 }
 
@@ -30,4 +82,18 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  height: 64px;
+}
+
+.user-desktop {
+  color: #fff;
+  @media screen and (max-width: #{$sm}) {
+    display: none;
+  }
+}
+
+.user-mobile {
+  @media screen and (min-width: #{$sm}) {
+    display: none;
+  }
 }

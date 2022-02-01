@@ -1,19 +1,13 @@
+import jwt from 'jsonwebtoken';
 import { getDbConnection } from '../db';
 import { ObjectID } from 'mongodb';
-import jwt from 'jsonwebtoken';
 
-export const updateUserInfoRoute = {
-  path: '/api/users/:userId',
-  method: 'put',
+export const getUsersRoute = {
+  path: '/api/users/:userId/get/:searchTerm',
+  method: 'get',
   handler: async (req, res) => {
     const { authorization } = req.headers;
-    const { userId } = req.params;
-
-    const updates = (({ favoriteFood, hairColor, bio }) => ({
-      favoriteFood,
-      hairColor,
-      bio,
-    }))(req.body);
+    const { userId, searchTerm } = req.params;
 
     if (!authorization) {
       return res.status(401).json({ message: 'No auth token sent' });
@@ -37,17 +31,36 @@ export const updateUserInfoRoute = {
       }
 
       const db = getDbConnection('react-auth-db');
+
+      let users = [];
+
       const result = await db
         .collection('users')
-        .findOneAndUpdate({ _id: ObjectID(id) }, { $set: { info: updates } }, { returnOriginal: false });
+        .find({
+          $or: [
+            { email: { $regex: new RegExp(searchTerm, 'gi') } },
+            { userName: { $regex: new RegExp(searchTerm, 'gi') } },
+          ],
+        })
+        .limit(10)
+        .toArray();
 
-      const { email, info, userName } = result.value;
+      if (!result) {
+        res.status(404).json({ message: 'Users not found' });
+        return;
+      }
 
-      jwt.sign({ id, email, userName, isVerified, info }, process.env.JWT_SECRET, { expiresIn: '2d' }, (err, token) => {
-        if (err) {
-          return res.status(401).json(err);
-        }
-        res.status(200).json({ token });
+      res.status(200).json({
+        message: 'Expenses retrieved successfully',
+        users: result
+          .filter((item) => item._id.toString() !== userId && !item.settings.isPrivateAccount)
+          .map((user) => {
+            const { userName, email } = user;
+            return {
+              userName,
+              email,
+            };
+          }),
       });
     });
   },

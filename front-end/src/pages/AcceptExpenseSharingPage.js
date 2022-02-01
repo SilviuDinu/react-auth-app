@@ -140,7 +140,7 @@ export const AcceptExpenseSharingPage = () => {
   }
 
   return (
-    <div className="content-container">
+    <div className="container">
       {showSuccessMessage && <div className="success">Action successful!</div>}
       {showErrorMessage && (
         <div className="fail">{errorMessage || "Uh oh... something went wrong and we couldn't save changes"}</div>

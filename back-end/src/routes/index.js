@@ -6,9 +6,12 @@ import { checkPasswordResetCodeValidityRoute } from './checkPasswordResetValidit
 import { declineSharingExpenseRoute } from './declineSharingExpenseRoute';
 import { forgotPasswordRoute } from './forgotPasswordRoute';
 import { getExpensesRoute } from './getExpensesRoute';
+import { getSettingsRoute } from './getSettingsRoute';
 import { getSharedByRoute } from './getSharedByRoute';
+import { getUsersRoute } from './getUsersRoute';
 import { logInRoute } from './logInRoute';
 import { resetPasswordRoute } from './resetPasswordRoute';
+import { setSettingsRoute } from './setSettingsRoute';
 import { shareExpenseWithRoute } from './shareExpenseWithRoute';
 import { signUpRoute } from './signUpRoute';
 import { updateUserInfoRoute } from './updateUserInfoRoute';
@@ -29,5 +32,8 @@ export const routes = [
   addNewExpenseCategoryRoute,
   declineSharingExpenseRoute,
   getSharedByRoute,
-  getExpensesRoute
+  getExpensesRoute,
+  getUsersRoute,
+  getSettingsRoute,
+  setSettingsRoute
 ];

@@ -2,6 +2,11 @@ import IosShareIcon from '@mui/icons-material/IosShare';
 
 const ExpenseCard = (props) => {
   const { amount, who, prettyDate, date, type, sharedWith, sharedBy } = props.expense || {};
+  const { showActions = true } = props;
+
+  const handleShare = () => {
+    props.onShareClick(props.expense);
+  };
 
   return (
     <div className="expense-card">
@@ -18,10 +23,13 @@ const ExpenseCard = (props) => {
 
         <span className="expense-card-field">{prettyDate}</span>
       </div>
-      <div className="expense-card-actions">
-        <IosShareIcon color="primary" />
-        {/* <IosShareIcon color="primary" /> */}
-      </div>
+      {showActions && (
+        <div className="expense-card-actions">
+          <div className="expense-card-action share" onClick={handleShare}>
+            <IosShareIcon color="primary" />
+          </div>
+        </div>
+      )}
     </div>
   );
 };

@@ -14,8 +14,8 @@ export const ExpensesProvider = (props) => {
   const [expenses, setExpenses] = useState(defaultValue);
   const expensesLength = useRef(-1);
 
-  useEffect(async () => {
-    if (expensesLength.current < expenses.length) {
+  useEffect(() => {
+    const fetchExpenses = async () => {
       try {
         const response = await axios.get(`/api/expenses/${id}/get`, {
           headers: { Authorization: `Bearer ${token}` },
@@ -28,6 +28,9 @@ export const ExpensesProvider = (props) => {
       } catch (err) {
         console.log(err.message);
       }
+    };
+    if (expensesLength.current < expenses.length) {
+      fetchExpenses();
     }
   }, [expenses]);
 
