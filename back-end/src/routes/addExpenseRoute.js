@@ -69,7 +69,25 @@ export const addExpenseRoute = {
       );
 
       if (result.ok && result.value) {
-        res.status(200).json({ status: 'success' });
+        res.status(200).json({
+          status: 'success',
+          expense: {
+            id: expenseId,
+            amount,
+            who,
+            type,
+            day,
+            month,
+            year,
+            date: rawDate,
+            prettyDate,
+            sharedBy: null,
+            sharedWith: [],
+            sharingPending: false,
+            sharingCode: null,
+            sharingAccepted: false,
+          },
+        });
         return;
       }
 

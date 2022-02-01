@@ -4,6 +4,7 @@ import { addNewExpenseCategoryRoute } from './addNewExpenseCategoryRoute';
 import { addUserToTrustedListRoute } from './addUserToTrustedListRoute';
 import { checkPasswordResetCodeValidityRoute } from './checkPasswordResetValidityRoute';
 import { declineSharingExpenseRoute } from './declineSharingExpenseRoute';
+import { deleteExpenseRoute } from './deleteExpenseRoute';
 import { forgotPasswordRoute } from './forgotPasswordRoute';
 import { getExpensesRoute } from './getExpensesRoute';
 import { getSettingsRoute } from './getSettingsRoute';
@@ -35,5 +36,6 @@ export const routes = [
   getExpensesRoute,
   getUsersRoute,
   getSettingsRoute,
-  setSettingsRoute
+  setSettingsRoute,
+  deleteExpenseRoute
 ];

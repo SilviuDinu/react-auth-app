@@ -1,9 +1,11 @@
 import { Divider } from '@mui/material';
 import axios from 'axios';
 import moment from 'moment';
+import { useContext } from 'react';
 import { useRef, useState } from 'react';
 import { useToken } from '../../auth/useToken';
 import { useUser } from '../../auth/useUser';
+import { ExpensesContext } from '../../contexts/expensesContext';
 import ExpenseCard from '../ExpenseCard/ExpenseCard';
 import ShareExpenseModal from '../ShareExpenseModal/ShareExpenseModal';
 
@@ -12,6 +14,7 @@ const ExpenseCategory = (props) => {
   const user = useUser();
   const [token] = useToken();
   const { id } = user;
+  const [, setExpenses] = useContext(ExpensesContext);
   const [showExpenses, setShowExpenses] = useState(false);
   const [shareModalVisible, setShareModalVisible] = useState(false);
   const [expenseToShare, setExpenseToShare] = useState(null);
@@ -21,9 +24,42 @@ const ExpenseCategory = (props) => {
   const [showErrorMessage, setShowErrorMessage] = useState(false);
   const timeoutPromise = useRef();
 
-  const handleShareClick = (expense) => {
+  const handleShare = (expense) => {
     setExpenseToShare(expense);
     setShareModalVisible(true);
+  };
+
+  const handleDelete = async (expense) => {
+    try {
+      await axios.delete(`/api/expenses/${id}/delete/${expense.id}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      let expensesLeft = expenses.splice(expenses.indexOf(expenses.find((item) => item.id === expense.id)), 1);
+      console.log(
+        expenses.indexOf(expenses.find((item) => item.id === expense.id)),
+        expenses[0].id,
+        expense.id,
+        typeof expenses[0].id,
+        typeof expense.id
+      );
+      setExpenses([...expensesLeft]);
+      setShowSuccessMessage(true);
+    } catch (err) {
+      setShowErrorMessage(true);
+    }
+  };
+
+  const handleCardActions = (action, expense) => {
+    switch (action) {
+      case 'share':
+        handleShare(expense);
+        break;
+      case 'delete':
+        handleDelete(expense);
+        break;
+      default:
+        return expense;
+    }
   };
 
   const onUserSearch = (value) => {
@@ -62,11 +98,9 @@ const ExpenseCategory = (props) => {
       );
       if (response.ok) {
         setShowSuccessMessage(true);
-        setShowErrorMessage(false);
       }
       setLoading(false);
     } catch (err) {
-      setShowSuccessMessage(false);
       setShowErrorMessage(true);
       setLoading(false);
     }
@@ -92,7 +126,7 @@ const ExpenseCategory = (props) => {
             })
             .map((expense, index) => (
               <div key={index}>
-                <ExpenseCard expense={expense} onShareClick={handleShareClick} />
+                <ExpenseCard expense={expense} onActionClick={handleCardActions} />
                 {index < expenses.length - 1 && <Divider />}
               </div>
             ))}

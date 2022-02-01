@@ -5,6 +5,10 @@
 @import '../src/components/ShareExpenseModal/ShareExpenseModal.scss';
 @import './fonts.scss';
 
+html {
+  overflow-y: scroll !important;
+}
+
 * {
   font-family: 'museo-sans', sans-serif;
   box-sizing: border-box;
@@ -31,9 +35,9 @@ hr {
 }
 
 button,
-input[type="text"],
-input[type="password"],
-input[type="date"],
+input[type='text'],
+input[type='password'],
+input[type='date'],
 select {
   border-radius: 8px;
   box-sizing: border-box;
@@ -53,7 +57,9 @@ button {
   cursor: pointer;
 }
 
-.login-container, .reset-container, .signup-container {
+.login-container,
+.reset-container,
+.signup-container {
   background-color: white;
   /* box-shadow: 4px 2px 2px lightgray; */
   border-radius: 8px;
@@ -85,13 +91,13 @@ button {
   width: 100%;
 
   @media screen and (max-width: #{$sm}) {
-      padding: 32px 16px;
+    padding: 32px 16px;
   }
 }
 
 .container {
-    background-color: #fff;
-//   background-color: rgb(11, 12, 34);
+  background-color: #fff;
+  //   background-color: rgb(11, 12, 34);
   padding: 32px;
   border-radius: 8px;
 }

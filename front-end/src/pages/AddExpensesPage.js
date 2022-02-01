@@ -4,9 +4,11 @@ import { useHistory } from 'react-router-dom';
 import { useToken } from '../auth/useToken';
 import { useUser } from '../auth/useUser';
 import moment from 'moment';
+import { useContext } from 'react';
+import { ExpensesContext } from '../contexts/expensesContext';
 
 const people = ['Silviu', 'Anca'];
-const expenses = [
+const expenseCategories = [
   'chirie',
   'caldura',
   'curent',
@@ -30,8 +32,9 @@ const AddExpensesPage = () => {
 
   const { id, email, isVerified } = user;
 
-  const [expenseType, setExpenseType] = useState(expenses[0]);
+  const [expenseType, setExpenseType] = useState(expenseCategories[0]);
   const [amount, setAmount] = useState('');
+  const [expenses, setExpenses] = useContext(ExpensesContext);
   const [who, setWho] = useState(people[0]);
   const [date, setDate] = useState(moment());
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
@@ -60,7 +63,11 @@ const AddExpensesPage = () => {
           headers: { Authorization: `Bearer ${token}` },
         }
       );
-      setShowSuccessMessage(true);
+      if (response.data) {
+        setShowSuccessMessage(true);
+        setExpenses([...expenses, response.data.expense])
+      }
+     
     } catch (err) {
       setShowErrorMessage(true);
     }
@@ -80,7 +87,7 @@ const AddExpensesPage = () => {
       <label>
         Expense type / category:
         <select onChange={(e) => setExpenseType(e.target.value)} value={expenseType}>
-          {expenses.map((expense, idx) => (
+          {expenseCategories.map((expense, idx) => (
             <option key={idx} value={expense}>
               {expense}
             </option>

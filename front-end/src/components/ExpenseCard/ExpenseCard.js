@@ -1,11 +1,16 @@
 import IosShareIcon from '@mui/icons-material/IosShare';
+import DeleteIcon from '@mui/icons-material/Delete';
 
 const ExpenseCard = (props) => {
   const { amount, who, prettyDate, date, type, sharedWith, sharedBy } = props.expense || {};
   const { showActions = true } = props;
 
   const handleShare = () => {
-    props.onShareClick(props.expense);
+    props.onActionClick('share', props.expense);
+  };
+
+  const handleDelete = () => {
+    props.onActionClick('delete', props.expense);
   };
 
   return (
@@ -24,9 +29,14 @@ const ExpenseCard = (props) => {
         <span className="expense-card-field">{prettyDate}</span>
       </div>
       {showActions && (
-        <div className="expense-card-actions">
-          <div className="expense-card-action share" onClick={handleShare}>
-            <IosShareIcon color="primary" />
+        <div className="expense-card-bottom">
+          <div className="expense-card-actions">
+            <div className="expense-card-action share" onClick={handleShare}>
+              <IosShareIcon color="primary" />
+            </div>
+            <div className="expense-card-action delete" onClick={handleDelete}>
+              <DeleteIcon className="delete-icon" color="primary" />
+            </div>
           </div>
         </div>
       )}
