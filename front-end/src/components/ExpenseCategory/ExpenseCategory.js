@@ -34,15 +34,8 @@ const ExpenseCategory = (props) => {
       await axios.delete(`/api/expenses/${id}/delete/${expense.id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      let expensesLeft = expenses.splice(expenses.indexOf(expenses.find((item) => item.id === expense.id)), 1);
-      console.log(
-        expenses.indexOf(expenses.find((item) => item.id === expense.id)),
-        expenses[0].id,
-        expense.id,
-        typeof expenses[0].id,
-        typeof expense.id
-      );
-      setExpenses([...expensesLeft]);
+      expenses.splice(expenses.indexOf(expense), 1);
+      setExpenses([...expenses]);
       setShowSuccessMessage(true);
     } catch (err) {
       setShowErrorMessage(true);
@@ -120,16 +113,17 @@ const ExpenseCategory = (props) => {
 
       {showExpenses && (
         <div className="expense-category-details">
-          {expenses
-            .sort((a, b) => {
-              return moment(b.date).diff(moment(a.date), 'seconds');
-            })
-            .map((expense, index) => (
-              <div key={index}>
-                <ExpenseCard expense={expense} onActionClick={handleCardActions} />
-                {index < expenses.length - 1 && <Divider />}
-              </div>
-            ))}
+          {expenses.length > 0 &&
+            expenses
+              .sort((a, b) => {
+                return moment(b.date).diff(moment(a.date), 'seconds');
+              })
+              .map((expense, index) => (
+                <div key={index}>
+                  <ExpenseCard expense={expense} onActionClick={handleCardActions} />
+                  {index < expenses.length - 1 && <Divider />}
+                </div>
+              ))}
         </div>
       )}
       <ShareExpenseModal

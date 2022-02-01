@@ -1,9 +1,11 @@
 import axios from 'axios';
+import { useContext } from 'react';
 import { useRef } from 'react';
 import { useState, useEffect } from 'react';
 import { Redirect, useHistory } from 'react-router-dom';
 import { useToken } from '../auth/useToken';
 import { useUser } from '../auth/useUser';
+import { ExpensesContext } from '../contexts/expensesContext';
 import { useQueryParams } from '../util/useQueryParams';
 
 export const AcceptExpenseSharingPage = () => {
@@ -17,6 +19,7 @@ export const AcceptExpenseSharingPage = () => {
   const { id, info, email, isVerified } = user;
 
   const [getSharedByFailed, setGetSharedByFailed] = useState();
+  const [expenses, setExpenses] = useContext(ExpensesContext);
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
   const [showErrorMessage, setShowErrorMessage] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
@@ -53,7 +56,6 @@ export const AcceptExpenseSharingPage = () => {
   };
 
   useEffect(() => {
-    console.log(queryParams);
     if (showSuccessMessage || showErrorMessage) {
       setTimeout(() => {
         setShowSuccessMessage(false);
@@ -73,6 +75,9 @@ export const AcceptExpenseSharingPage = () => {
           headers: { Authorization: `Bearer ${token}` },
         }
       );
+      if (response.data) {
+        setExpenses([...expenses, response.data.expense]);
+      }
       setSharingAccepted(true);
       setShowSuccessMessage(true);
       setSharingDeclined(false);
@@ -155,9 +160,9 @@ export const AcceptExpenseSharingPage = () => {
 
       {sharingAccepted && !isTrustedUser && (
         <>
-          <p>Add {queryParams.sharedBy} to your trusted contacts?</p>
+          <p>Add {decodeURIComponent(queryParams.sharedBy)} to your trusted contacts?</p>
           <p>This would allow them to share expenses with you without you having to approve each one via email.</p>
-          <button onClick={addToTrusted}>Add {queryParams.sharedBy}</button>
+          <button onClick={addToTrusted}>Add {decodeURIComponent(queryParams.sharedBy)}</button>
           <button
             onClick={() => {
               setAddedToTrused(false);

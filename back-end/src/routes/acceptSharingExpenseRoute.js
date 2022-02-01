@@ -94,7 +94,29 @@ export const acceptSharingExpenseRoute = {
         );
 
         if (updateUserWhoSharedWithMe.ok && updateUserWhoSharedWithMe.value && result.ok && result.value) {
-          res.status(200).json({ status: 'sharing accepted successfully' });
+          res.status(200).json({
+            status: 'sharing accepted successfully',
+            expense: {
+              id: expenseId,
+              amount,
+              who,
+              type,
+              day,
+              month,
+              year,
+              date,
+              prettyDate,
+              sharedBy: {
+                email: userWhoSharedWithMe.email,
+                id: userWhoSharedWithMe._id,
+                userName: userWhoSharedWithMe.userName,
+              },
+              sharedWith: null,
+              sharingPending: false,
+              sharingCode: null,
+              sharingAccepted: false,
+            },
+          });
           await sendEmail({
             to: userWhoSharedWithMe.email,
             from: 'slvalx.apps@gmail.com',

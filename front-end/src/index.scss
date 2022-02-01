@@ -5,9 +5,9 @@
 @import '../src/components/ShareExpenseModal/ShareExpenseModal.scss';
 @import './fonts.scss';
 
-html {
-  overflow-y: scroll !important;
-}
+// html {
+//   overflow-y: scroll !important;
+// }
 
 * {
   font-family: 'museo-sans', sans-serif;
@@ -19,6 +19,8 @@ body {
   font-family: 'museo-sans', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  overflow: scroll !important;
+  padding: 0 !important;
 }
 
 code {

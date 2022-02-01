@@ -35,7 +35,7 @@ const ShareExpenseModal = (props) => {
         <div className="data">
           {props.loading && <h3>Loading...</h3>}
           {!props.loading &&
-            props.searchResults.map((result) => <p onClick={() => onResultClick(result)}>{result.email}</p>)}
+            props.searchResults.map((result, index) => <p key={index} onClick={() => onResultClick(result)}>{result.email}</p>)}
         </div>
       </div>
     </div>

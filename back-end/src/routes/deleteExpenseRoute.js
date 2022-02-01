@@ -39,7 +39,7 @@ export const deleteExpenseRoute = {
         true
       );
 
-      console.log(result.result.ok);
+      // console.log(result.result.ok);
 
       if (result.result.ok) {
         res.status(200).json({ status: 'success' });
