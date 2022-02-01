@@ -69,10 +69,10 @@ const AddExpensesPage = () => {
   return (
     <div className="container">
       <h1>Hello {email}</h1>
-      <h2>{date.format('MMMM YYYY')}</h2>
       {!isVerified && <div className="fail">You won't be able to make any changes until you verify your email.</div>}
       {showSuccessMessage && <div className="success">Successfully saved record!</div>}
       {showErrorMessage && <div className="fail">Uh oh... something went wrong and we couldn't save changes</div>}
+      <h2>{date.format('MMMM YYYY')}</h2>
       <label>
         Amount (RON):
         <input type="text" onChange={(e) => setAmount(e.target.value)} value={amount} placeholder="100.00" />

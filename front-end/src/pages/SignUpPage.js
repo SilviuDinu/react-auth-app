@@ -40,7 +40,7 @@ export const SignUpPage = () => {
   };
 
   return (
-    <div className="content-container">
+    <div className="container">
       <h1>Sign Up</h1>
       {errorMessage && <div className="fail">{errorMessage}</div>}
       <input

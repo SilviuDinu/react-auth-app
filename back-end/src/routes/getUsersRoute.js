@@ -26,10 +26,6 @@ export const getUsersRoute = {
         return res.status(403).json({ message: "Not allowed to update this users's data" });
       }
 
-      if (!isVerified) {
-        return res.status(403).json({ message: 'You need to verify your email before you can update your data' });
-      }
-
       const db = getDbConnection('react-auth-db');
 
       let users = [];

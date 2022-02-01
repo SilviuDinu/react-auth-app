@@ -32,6 +32,10 @@ export const signUpRoute = {
       isPrivateAccount: false,
     };
 
+    // const startingExpenseCategories = [
+    //   ''
+    // ]
+
     const month = moment().format('MMMM');
     const year = moment().year();
 
