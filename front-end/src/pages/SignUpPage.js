@@ -54,7 +54,7 @@ export const SignUpPage = () => {
         type="text"
         placeholder={emailValue?.split('@')[0].replace(regex.nonAlphaAndUnderscore, '') || 'StarDestroyer123'}
         value={userName}
-        autoComplete="on"
+        autoComplete="off"
         onChange={handleUserNameChange}
       />
       <input
