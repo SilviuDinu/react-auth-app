@@ -29,12 +29,11 @@ export const ExpensesProvider = (props) => {
         console.log(err.message);
       }
     };
-    if (expensesLength.current < expenses.length) {
+
+    if (!expenses.length) {
       fetchExpenses();
     }
   }, [expenses]);
-
-  useEffect(() => {}, []);
 
   return <ExpensesContext.Provider value={[expenses, setExpenses]}>{props.children}</ExpensesContext.Provider>;
 };

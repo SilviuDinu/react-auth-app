@@ -13,7 +13,6 @@ const ExpensesPage = (props) => {
   useEffect(() => {
     const categoryGroups = groupBy(expenses, 'type');
     setExpensesCategories([...Object.entries(categoryGroups)]);
-    console.log('setExpensesCategories useEffect');
   }, [expenses]);
 
   if (!expensesCategories?.length && expensesCategories?.length !== 0) {

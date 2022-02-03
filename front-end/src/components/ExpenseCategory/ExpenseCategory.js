@@ -121,7 +121,7 @@ const ExpenseCategory = (props) => {
               .map((expense, index) => (
                 <div key={index}>
                   <ExpenseCard expense={expense} onActionClick={handleCardActions} />
-                  {index < expenses.length - 1 && <Divider />}
+                  {/* {index < expenses.length - 1 && <Divider />} */}
                 </div>
               ))}
         </div>

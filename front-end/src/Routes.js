@@ -31,7 +31,9 @@ export const Routes = () => {
           <SettingsPage />
         </PrivateRoute>
         <PrivateRoute path="/dashboard/expenses" exact>
-          <ExpensesPage />
+          {/* <ExpenseHandlingProvider> */}
+            <ExpensesPage />
+          {/* </ExpenseHandlingProvider> */}
         </PrivateRoute>
         <PrivateRoute path="/dashboard/share-expense" exact>
           <h1>Share expense page</h1>
