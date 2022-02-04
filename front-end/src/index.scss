@@ -3,6 +3,7 @@
 @import '../src/components/ExpenseCategory/ExpenseCategory.scss';
 @import '../src/components/ExpenseCard/ExpenseCard.scss';
 @import '../src/components/ShareExpenseModal/ShareExpenseModal.scss';
+@import '../src/components/DividerWithText/DividerWithText.scss';
 @import './fonts.scss';
 
 // html {
@@ -57,6 +58,20 @@ input {
 button {
   border: 1px solid black;
   cursor: pointer;
+
+  &.btn-like-link {
+    background: none !important;
+    border: none;
+    padding: 0 !important;
+    font-family: arial, sans-serif;
+    color: #069;
+    text-decoration: underline;
+    cursor: pointer;
+    border-radius: none;
+    display: inline;
+    font-size: 16px;
+    width: auto;
+  }
 }
 
 .login-container,
@@ -105,12 +120,14 @@ button {
   display: flex;
   flex-direction: column;
   align-items: center;
-//   flex: 1;
-//   width: 100%;
+  //   flex: 1;
+  //   width: 100%;
 
- & > label, & > input, & > select {
-     width: 100%;
- }
+  & > label,
+  & > input,
+  & > select {
+    width: 100%;
+  }
 
   @media screen and (max-width: #{$sm}) {
     padding: 8px;

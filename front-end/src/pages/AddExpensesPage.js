@@ -1,37 +1,21 @@
 import axios from 'axios';
 import { useState, useEffect } from 'react';
-import { useHistory } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 import { useToken } from '../auth/useToken';
 import { useUser } from '../auth/useUser';
 import moment from 'moment';
 import { useContext } from 'react';
 import { ExpensesContext } from '../contexts/expensesContext';
-
-const expenseCategories = [
-  'chirie',
-  'caldura',
-  'curent',
-  'gaze',
-  'cablu / internet',
-  'intretinere',
-  'mancare (cumparaturi)',
-  'apa (cumparaturi)',
-  'distractie (iesit)',
-  'electrocasnice',
-  'cursuri',
-  'jocuri',
-  'mancare comandata',
-  'motorina / benzina',
-  'medicamente sau ingrijire',
-];
+import { ExpenseTypesContext } from '../contexts/expenseTypesContext';
 
 const AddExpensesPage = () => {
   const user = useUser();
   const [token] = useToken();
 
   const { id, email, isVerified, userName } = user;
+  const { expenseTypes } = useContext(ExpenseTypesContext);
 
-  const [expenseType, setExpenseType] = useState(expenseCategories[0]);
+  const [selectedExpenseType, setSelectedExpenseType] = useState(expenseTypes[0]?.title);
   const [peopleWhoCanPay, setPeopleWhoCanPay] = useState([userName]);
   const [amount, setAmount] = useState('');
   const [expenses, setExpenses] = useContext(ExpensesContext);
@@ -74,7 +58,8 @@ const AddExpensesPage = () => {
       const response = await axios.put(
         `/api/expenses/${id}/add-new`,
         {
-          type: expenseType,
+          category: expenseTypes.find((expense) => expense.title === selectedExpenseType).category,
+          title: selectedExpenseType,
           amount,
           who,
           date,
@@ -92,6 +77,22 @@ const AddExpensesPage = () => {
     }
   };
 
+  if (!expenseTypes.length) {
+    return (
+      <div className="container">
+        <h1>Oops...</h1>
+        <h2>Sorry, you do not have any expense types associated with your account.</h2>
+        <h2>
+          Please go to{' '}
+          <b>
+            <Link to="/dashboard/add-expense-category">Add expense category</Link>
+          </b>{' '}
+          page to manage your expense types.
+        </h2>
+      </div>
+    );
+  }
+
   return (
     <div className="container">
       <h1>Hello {email}</h1>
@@ -105,10 +106,10 @@ const AddExpensesPage = () => {
       </label>
       <label>
         Expense type / category:
-        <select onChange={(e) => setExpenseType(e.target.value)} value={expenseType}>
-          {expenseCategories.map((expense, idx) => (
-            <option key={idx} value={expense}>
-              {expense}
+        <select onChange={(e) => setSelectedExpenseType(e.target.value)} value={selectedExpenseType}>
+          {expenseTypes?.map((expense, idx) => (
+            <option key={idx} value={expense.title}>
+              {expense.title}
             </option>
           ))}
         </select>
@@ -128,7 +129,7 @@ const AddExpensesPage = () => {
         <input type="date" onChange={(e) => setDate(moment(e.target.value))} value={date.format('yyyy-MM-DD')} />
       </label>
       <hr />
-      <button disabled={!amount || !date || !who || !expenseType} onClick={saveChanges}>
+      <button disabled={!amount || !date || !who || !selectedExpenseType} onClick={saveChanges}>
         Save Changes
       </button>
     </div>

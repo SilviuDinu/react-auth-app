@@ -2,10 +2,10 @@ import IosShareIcon from '@mui/icons-material/IosShare';
 import DeleteIcon from '@mui/icons-material/Delete';
 
 const ExpenseCard = (props) => {
-  const { amount, who, prettyDate, date, type, sharedWith, sharedBy } = props.expense || {};
+  const { amount, who, prettyDate, date, category, title, sharedWith, sharedBy } = props.expense || {};
   const { showActions = true } = props;
 
-  console.log(who)
+  console.log(props.expense)
 
   const handleShare = () => {
     props.onActionClick('share', props.expense);
@@ -18,7 +18,7 @@ const ExpenseCard = (props) => {
   return (
     <div className="expense-card">
       <div className="expense-card-info">
-        <span className="expense-card-field">{type}</span>
+        <span className="expense-card-field">{title}</span>
         <span className="expense-card-field">{amount} RON</span>
       </div>
 

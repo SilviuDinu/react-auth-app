@@ -13,6 +13,7 @@ import { UserInfoPage } from './pages/UserInfoPage';
 import { AcceptExpenseSharingPage } from './pages/AcceptExpenseSharingPage';
 import ExpensesPage from './pages/ExpensesPage';
 import SettingsPage from './pages/SettingsPage';
+import AddExpenseCategoryPage from './pages/AddExpenseCategoryPage';
 
 export const Routes = () => {
   return (
@@ -31,15 +32,13 @@ export const Routes = () => {
           <SettingsPage />
         </PrivateRoute>
         <PrivateRoute path="/dashboard/expenses" exact>
-          {/* <ExpenseHandlingProvider> */}
-            <ExpensesPage />
-          {/* </ExpenseHandlingProvider> */}
+          <ExpensesPage />
         </PrivateRoute>
         <PrivateRoute path="/dashboard/share-expense" exact>
           <h1>Share expense page</h1>
         </PrivateRoute>
         <PrivateRoute path="/dashboard/add-expense-category" exact>
-          <h1>Add expense category page</h1>
+          <AddExpenseCategoryPage />
         </PrivateRoute>
         <PrivateRoute path="/dashboard/accept-expense-sharing" exact>
           <AcceptExpenseSharingPage />

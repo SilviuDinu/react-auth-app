@@ -12,7 +12,7 @@ export const addExpenseRoute = {
     const { authorization } = req.headers;
     const { userId } = req.params;
 
-    const { date: rawDate, amount, type, who } = req.body;
+    const { date: rawDate, amount, who, title, category } = req.body;
 
     if (!authorization) {
       return res.status(401).json({ message: 'No auth token sent' });
@@ -53,7 +53,8 @@ export const addExpenseRoute = {
               id: expenseId,
               amount,
               who,
-              type,
+              title,
+              category,
               day,
               month,
               year,
@@ -77,7 +78,8 @@ export const addExpenseRoute = {
             id: expenseId,
             amount,
             who,
-            type,
+            title,
+            category,
             day,
             month,
             year,

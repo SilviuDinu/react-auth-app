@@ -64,9 +64,8 @@ export const shareExpenseWithRoute = {
       );
 
       if (result.ok && result.value) {
-        const { amount, who, type, day, month, year, date, prettyDate, sharingCode } = result.value.expenses.find(
-          (expense) => expense.id === expenseId
-        );
+        const { amount, who, title, category, day, month, year, date, prettyDate, sharingCode } =
+          result.value.expenses.find((expense) => expense.id === expenseId);
 
         const canBypassApproval = !!userToShareWith?.usersWhoCanShareExpensesWithoutApproval?.find(
           (user) => user.id.toString() === userId
@@ -92,7 +91,8 @@ export const shareExpenseWithRoute = {
                   id: expenseId,
                   amount,
                   who,
-                  type,
+                  title,
+                  category,
                   day,
                   month,
                   year,

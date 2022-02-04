@@ -2,13 +2,13 @@ import { getDbConnection } from '../db';
 import jwt from 'jsonwebtoken';
 import { ObjectID } from 'mongodb';
 
-export const addNewExpenseCategoryRoute = {
-  path: '/api/expenses/:userId/add-expense-category/',
-  method: 'put',
+export const addNewExpenseTypeRoute = {
+  path: '/api/expense-types/:userId/add-expense-type',
+  method: 'post',
   handler: async (req, res) => {
     const { authorization } = req.headers;
     const { userId } = req.params;
-    const { title, category } = req.body;
+    const { expenseTypes } = req.body;
 
     if (!authorization) {
       return res.status(401).json({ message: 'No auth token sent' });
@@ -36,11 +36,8 @@ export const addNewExpenseCategoryRoute = {
       const result = await db.collection('users').findOneAndUpdate(
         { _id: ObjectID(userId) },
         {
-          $push: {
-            expenseCategories: {
-              title,
-              category,
-            },
+          $set: {
+            expenseTypes: expenseTypes
           },
         },
         { returnOriginal: false }

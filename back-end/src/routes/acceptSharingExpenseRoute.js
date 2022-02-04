@@ -46,9 +46,10 @@ export const acceptSharingExpenseRoute = {
       }
 
       try {
-        const { amount, who, type, day, month, year, date, prettyDate, sharingCode } = userWhoSharedWithMe.expenses.find(
-          (expense) => expense.id === expenseId && expense.sharingCode === sharingCodeParam
-        );
+        const { amount, who, title, category, day, month, year, date, prettyDate, sharingCode } =
+          userWhoSharedWithMe.expenses.find(
+            (expense) => expense.id === expenseId && expense.sharingCode === sharingCodeParam
+          );
 
         const result = await db.collection('users').findOneAndUpdate(
           { _id: ObjectID(userId) },
@@ -58,7 +59,8 @@ export const acceptSharingExpenseRoute = {
                 id: expenseId,
                 amount,
                 who,
-                type,
+                title,
+                category,
                 day,
                 month,
                 year,
@@ -97,7 +99,8 @@ export const acceptSharingExpenseRoute = {
               id: expenseId,
               amount,
               who,
-              type,
+              title,
+              category,
               day,
               month,
               year,

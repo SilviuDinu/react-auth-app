@@ -32,10 +32,6 @@ export const signUpRoute = {
       isPrivateAccount: false,
     };
 
-    // const startingExpenseCategories = [
-    //   ''
-    // ]
-
     const month = moment().format('MMMM');
     const year = moment().year();
 
@@ -49,7 +45,7 @@ export const signUpRoute = {
       emailVerificationString,
       usersWhoCanShareExpensesWithoutApproval: [],
       expenses: [],
-      expenseCategories: [],
+      expenseTypes: [],
     });
 
     const { insertedId } = result;

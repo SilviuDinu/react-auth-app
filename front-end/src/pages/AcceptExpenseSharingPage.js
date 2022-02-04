@@ -16,7 +16,7 @@ export const AcceptExpenseSharingPage = () => {
   const user = useUser();
   const [token] = useToken();
 
-  const { id, info, email, isVerified } = user;
+  const { id } = user;
 
   const [getSharedByFailed, setGetSharedByFailed] = useState();
   const [expenses, setExpenses] = useContext(ExpensesContext);
@@ -27,6 +27,7 @@ export const AcceptExpenseSharingPage = () => {
   const [addedToTrusted, setAddedToTrused] = useState(null);
   const [isTrustedUser, setIsTrustedUser] = useState(false);
   const sharedByIdRef = useRef();
+  const timeoutPromise = useRef();
 
   useEffect(() => {
     const getSharedBy = async () => {
@@ -52,7 +53,7 @@ export const AcceptExpenseSharingPage = () => {
   }, [sharedBy]);
 
   const goToDashboard = () => {
-    setTimeout(() => history.replace({ pathname: '/dashboard' }), 3000);
+    timeoutPromise.current = setTimeout(() => history.replace({ pathname: '/dashboard' }), 3000);
   };
 
   useEffect(() => {
@@ -62,6 +63,9 @@ export const AcceptExpenseSharingPage = () => {
         setShowErrorMessage(false);
       }, 3000);
     }
+    return () => {
+      clearTimeout(timeoutPromise.current);
+    };
   }, [showSuccessMessage, showErrorMessage]);
 
   const acceptSharing = async () => {
@@ -160,7 +164,7 @@ export const AcceptExpenseSharingPage = () => {
 
       {sharingAccepted && !isTrustedUser && !addedToTrusted && (
         <>
-          <p>Add {decodeURIComponent(queryParams.sharedBy)} to your trusted contacts?</p>
+          <p>Add {decodeURIComponent(sharedBy)} to your trusted contacts?</p>
           <p>This would allow them to share expenses with you without you having to approve each one via email.</p>
           <button onClick={addToTrusted}>Add {decodeURIComponent(queryParams.sharedBy)}</button>
           <button
