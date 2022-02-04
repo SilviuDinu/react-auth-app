@@ -2,6 +2,7 @@ import axios from 'axios';
 import React, { useState } from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
 import { useToken } from '../auth/useToken';
+import DividerWithText from '../components/DividerWithText/DividerWithText';
 
 export const LogInPage = () => {
   const [, setToken] = useToken();
@@ -47,13 +48,20 @@ export const LogInPage = () => {
         onChange={(e) => setPasswordValue(e.target.value)}
       />
 
-      <hr />
-
       <button onClick={onLoginClicked} disabled={!emailValue || !passwordValue}>
         Log In
       </button>
-      <button onClick={() => history.push('/forgot-password')}>Forgot your password?</button>
-      <button onClick={() => history.push('/signup')}>Don't have an account? Sign Up</button>
+
+      <DividerWithText text="OR" />
+
+      <div className="bottom-actions">
+        <button className="btn-like-link block" onClick={() => history.push('/forgot-password')}>
+          Forgot your password?
+        </button>
+        <button className="btn-like-link block" onClick={() => history.push('/signup')}>
+          Don't have an account? Sign Up
+        </button>
+      </div>
     </div>
   );
 };

@@ -37,7 +37,10 @@ function AddExpenseCategoryPage(props) {
     const index = defaultExpenseTypes.indexOf(expenseType);
     defaultExpenseTypes.splice(index, 1);
     setDefaultExpenseTypes([...defaultExpenseTypes]);
-    setCategories([...categories, expenseType.category]);
+
+    if (categories.indexOf(expenseType.category) === -1) {
+      setCategories([...categories, expenseType.category]);
+    }
   };
 
   const handleExpenseTypeRemove = (expenseType) => {
@@ -47,9 +50,13 @@ function AddExpenseCategoryPage(props) {
 
     setDefaultExpenseTypes([...defaultExpenseTypes, expenseType]);
 
-    const categoriesIndex = categories.indexOf(expenseType.category);
-    categories.splice(categoriesIndex, 1);
-    setCategories([...categories]);
+    const canRemoveCategory = !expenseTypes.some((exp) => exp.category === expenseType.category);
+
+    if (categories.indexOf(expenseType.category) > -1 && canRemoveCategory) {
+      const categoriesIndex = categories.indexOf(expenseType.category);
+      categories.splice(categoriesIndex, 1);
+      setCategories([...categories]);
+    }
   };
 
   const handleAddNewCategory = (e) => {

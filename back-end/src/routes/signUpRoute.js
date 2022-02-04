@@ -45,7 +45,11 @@ export const signUpRoute = {
       emailVerificationString,
       usersWhoCanShareExpensesWithoutApproval: [],
       expenses: [],
-      expenseTypes: [],
+      expenseTypes: [
+        { title: 'chirie', category: 'living' },
+        { title: 'caldura', category: 'living' },
+        { title: 'curent', category: 'living' },
+      ],
     });
 
     const { insertedId } = result;
