@@ -39,19 +39,73 @@ export const addUserToTrustedListRoute = {
         return res.status(404).json({ message: 'Could not find the specified user' });
       }
 
+      const isMutualTrust = !!trustedUser.usersWhoCanShareExpensesWithoutApproval?.find(
+        (user) => user.id.toString() == userId
+      );
+
       const result = await db.collection('users').findOneAndUpdate(
         { _id: ObjectID(userId) },
         {
-          $push: {
+          $addToSet: {
             usersWhoCanShareExpensesWithoutApproval: {
               id: trustedUser._id,
               email: trustedUser.email,
               userName: trustedUser.userName,
+              isMutualTrust: isMutualTrust,
             },
           },
         },
         { returnOriginal: false }
       );
+
+      if (isMutualTrust) {
+        const updateMutualTrust = await db.collection('users').findOneAndUpdate(
+          { _id: trustedUser._id, 'usersWhoCanShareExpensesWithoutApproval.id': ObjectID(userId) },
+          {
+            $set: {
+              'usersWhoCanShareExpensesWithoutApproval.$.isMutualTrust': isMutualTrust,
+            },
+          },
+          {
+            returnOriginal: false,
+            upsert: true,
+          }
+        );
+
+        const updateFriendsForTrustedUser = await db.collection('users').findOneAndUpdate(
+          { _id: trustedUser._id },
+          {
+            $addToSet: {
+              friends: { id: result.value._id, email: result.value.email, userName: result.value.userName },
+            },
+          },
+          {
+            returnOriginal: false,
+            upsert: true,
+          }
+        );
+
+        const updateFriendsForUser = await db.collection('users').findOneAndUpdate(
+          { _id: ObjectID(userId) },
+          {
+            $addToSet: {
+              friends: { id: trustedUser._id, email: trustedUser.email, userName: trustedUser.userName },
+            },
+          },
+          { returnOriginal: false, upsert: true }
+        );
+
+        if (
+          result.ok &&
+          result.value &&
+          updateFriendsForUser.ok &&
+          updateFriendsForTrustedUser.ok &&
+          updateMutualTrust.ok
+        ) {
+          res.status(200).json({ status: 'successfully updated friends list' });
+          return;
+        }
+      }
 
       if (result.ok && result.value) {
         res.status(200).json({ status: 'success' });

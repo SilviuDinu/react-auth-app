@@ -47,7 +47,7 @@ export const getUsersRoute = {
       }
 
       res.status(200).json({
-        message: 'Expenses retrieved successfully',
+        message: 'Users retrieved successfully',
         users: result
           .filter((item) => item._id.toString() !== userId && !item.settings.isPrivateAccount)
           .map((user) => {

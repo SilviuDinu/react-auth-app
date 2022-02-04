@@ -34,8 +34,6 @@ export const shareExpenseWithRoute = {
         return res.status(403).json({ message: 'You need to verify your email before you can update your data' });
       }
 
-      const sharingCode = nanoid();
-
       const db = getDbConnection('react-auth-db');
 
       const userToShareWith = await db.collection('users').findOne({
@@ -57,7 +55,6 @@ export const shareExpenseWithRoute = {
           $set: {
             'expenses.$.sharingPending': true,
             'expenses.$.sharingAccepted': false,
-            'expenses.$.sharingCode': sharingCode,
           },
           $addToSet: {
             'expenses.$.sharedWith': { email, id: userToShareWith._id, userName: userToShareWith.userName },
@@ -67,22 +64,21 @@ export const shareExpenseWithRoute = {
       );
 
       if (result.ok && result.value) {
+        const { amount, who, type, day, month, year, date, prettyDate, sharingCode } = result.value.expenses.find(
+          (expense) => expense.id === expenseId
+        );
+
         const canBypassApproval = !!userToShareWith?.usersWhoCanShareExpensesWithoutApproval?.find(
           (user) => user.id.toString() === userId
         );
 
         if (canBypassApproval) {
-          const { amount, who, type, day, month, year, date, prettyDate } = result.value.expenses.find(
-            (expense) => expense.id === expenseId && expense.sharingCode === sharingCode
-          );
-
           await db.collection('users').findOneAndUpdate(
             { _id: ObjectID(userId), 'expenses.id': expenseId },
             {
               $set: {
                 'expenses.$.sharingPending': false,
                 'expenses.$.sharingAccepted': true,
-                'expenses.$.sharingCode': null,
               },
             },
             { returnOriginal: false }
@@ -107,9 +103,9 @@ export const shareExpenseWithRoute = {
                     id: result.value._id,
                     userName: result.value.userName,
                   },
-                  sharedWith: null,
+                  sharedWith: [],
                   sharingPending: false,
-                  sharingCode: null,
+                  sharingCode,
                   sharingAccepted: false,
                 },
               },
@@ -146,6 +142,8 @@ export const shareExpenseWithRoute = {
                 Silviu
               `,
             });
+
+            console.log('email sent to ', email);
           } catch (err) {
             console.log(err);
             return res.sendStatus(500);

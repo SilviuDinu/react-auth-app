@@ -2,8 +2,8 @@ import jwt from 'jsonwebtoken';
 import { getDbConnection } from '../db';
 import { ObjectID } from 'mongodb';
 
-export const getExpensesRoute = {
-  path: '/api/expenses/:userId',
+export const getMutuallyTrustedUsersRoute = {
+  path: '/api/users/:userId/get-trusted',
   method: 'get',
   handler: async (req, res) => {
     const { authorization } = req.headers;
@@ -23,23 +23,31 @@ export const getExpensesRoute = {
       const { id, isVerified } = decoded;
 
       if (id !== userId) {
-        return res.status(403).json({ message: "Not allowed to update this users's data" });
+        return res.status(403).json({ message: 'Not allowed to search for trusted users' });
       }
 
       const db = getDbConnection('react-auth-db');
 
-      const result = await db.collection('users').findOne({
-        _id: ObjectID(userId),
-      });
+      const result = await db.collection('users').findOne({ _id: ObjectID(userId) });
 
-      if (!result) {
+      if (!result || !result.usersWhoCanShareExpensesWithoutApproval?.length) {
         res.status(404).json({ message: 'User not found' });
         return;
       }
 
       res.status(200).json({
-        message: 'Expenses retrieved successfully',
-        expenses: result.expenses,
+        message: 'Trusted users retrieved successfully',
+        users: result.usersWhoCanShareExpensesWithoutApproval
+          ?.filter((item) => item.isMutualTrust)
+          .map((user) => {
+            const { userName, email, firstName, lastName } = user;
+            return {
+              userName,
+              email,
+              firstName,
+              lastName,
+            };
+          }),
       });
     });
   },

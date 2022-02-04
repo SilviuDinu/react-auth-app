@@ -25,6 +25,29 @@
   @media screen and (max-width: #{$sm}) {
     width: 90%;
   }
+
+  .modal-search-actions {
+    .action {
+      margin-left: 16px;
+    }
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .user-search-result {
+    padding: 16px;
+    background-color: #f1f1f1;
+    margin: 8px auto;
+    border-radius: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .user-search-input {
+    margin: 16px auto;
+  }
 }
 
 .visible {

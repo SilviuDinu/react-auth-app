@@ -5,6 +5,8 @@ const ExpenseCard = (props) => {
   const { amount, who, prettyDate, date, type, sharedWith, sharedBy } = props.expense || {};
   const { showActions = true } = props;
 
+  console.log(who)
+
   const handleShare = () => {
     props.onActionClick('share', props.expense);
   };
@@ -31,10 +33,10 @@ const ExpenseCard = (props) => {
       {showActions && (
         <div className="expense-card-bottom">
           <div className="expense-card-actions">
-            <div className="expense-card-action share" onClick={handleShare}>
+            <div className="expense-card-action action share" onClick={handleShare}>
               <IosShareIcon color="primary" />
             </div>
-            <div className="expense-card-action delete" onClick={handleDelete}>
+            <div className="expense-card-action action delete" onClick={handleDelete}>
               <DeleteIcon className="delete-icon" color="primary" />
             </div>
           </div>

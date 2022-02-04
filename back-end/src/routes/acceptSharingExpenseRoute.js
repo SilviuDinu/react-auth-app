@@ -5,15 +5,13 @@ import { ObjectID } from 'mongodb';
 import { sendEmail } from '../util/sendEmail';
 
 export const acceptSharingExpenseRoute = {
-  path: '/api/expenses/:userId/accept-expense-sharing/:sharingCode',
+  path: '/api/expenses/:userId/accept-expense-sharing/:sharingCodeParam',
   method: 'put',
   handler: async (req, res) => {
     const { authorization } = req.headers;
-    const { userId, sharingCode } = req.params;
+    const { userId, sharingCodeParam } = req.params;
 
     const { expenseId } = req.body;
-
-    console.log(userId, expenseId);
 
     if (!authorization) {
       return res.status(401).json({ message: 'No auth token sent' });
@@ -39,7 +37,7 @@ export const acceptSharingExpenseRoute = {
       const db = getDbConnection('react-auth-db');
 
       const userWhoSharedWithMe = await db.collection('users').findOne({
-        expenses: { $elemMatch: { id: expenseId, sharingCode } },
+        expenses: { $elemMatch: { id: expenseId, sharingCode: sharingCodeParam } },
       });
 
       if (!userWhoSharedWithMe) {
@@ -48,8 +46,8 @@ export const acceptSharingExpenseRoute = {
       }
 
       try {
-        const { amount, who, type, day, month, year, date, prettyDate } = userWhoSharedWithMe.expenses.find(
-          (expense) => expense.id === expenseId && expense.sharingCode === sharingCode
+        const { amount, who, type, day, month, year, date, prettyDate, sharingCode } = userWhoSharedWithMe.expenses.find(
+          (expense) => expense.id === expenseId && expense.sharingCode === sharingCodeParam
         );
 
         const result = await db.collection('users').findOneAndUpdate(
@@ -71,9 +69,9 @@ export const acceptSharingExpenseRoute = {
                   id: userWhoSharedWithMe._id,
                   userName: userWhoSharedWithMe.userName,
                 },
-                sharedWith: null,
+                sharedWith: [],
                 sharingPending: false,
-                sharingCode: null,
+                sharingCode,
                 sharingAccepted: false,
               },
             },
@@ -87,7 +85,6 @@ export const acceptSharingExpenseRoute = {
             $set: {
               'expenses.$.sharingPending': false,
               'expenses.$.sharingAccepted': true,
-              'expenses.$.sharingCode': null,
             },
           },
           { returnOriginal: false }
@@ -111,9 +108,9 @@ export const acceptSharingExpenseRoute = {
                 id: userWhoSharedWithMe._id,
                 userName: userWhoSharedWithMe.userName,
               },
-              sharedWith: null,
+              sharedWith: [],
               sharingPending: false,
-              sharingCode: null,
+              sharingCode,
               sharingAccepted: false,
             },
           });

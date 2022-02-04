@@ -13,11 +13,12 @@ export const ExpensesProvider = (props) => {
   const { id } = user;
   const [expenses, setExpenses] = useState(defaultValue);
   const expensesLength = useRef(-1);
+  const firstUpdate = useRef(true);
 
   useEffect(() => {
     const fetchExpenses = async () => {
       try {
-        const response = await axios.get(`/api/expenses/${id}/get`, {
+        const response = await axios.get(`/api/expenses/${id}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
 
@@ -30,8 +31,9 @@ export const ExpensesProvider = (props) => {
       }
     };
 
-    if (!expenses.length) {
+    if (!expenses.length && firstUpdate.current) {
       fetchExpenses();
+      firstUpdate.current = false;
     }
   }, [expenses]);
 

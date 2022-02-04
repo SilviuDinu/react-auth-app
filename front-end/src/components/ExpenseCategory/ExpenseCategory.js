@@ -2,6 +2,7 @@ import { Divider } from '@mui/material';
 import axios from 'axios';
 import moment from 'moment';
 import { useContext } from 'react';
+import { useEffect } from 'react';
 import { useRef, useState } from 'react';
 import { useToken } from '../../auth/useToken';
 import { useUser } from '../../auth/useUser';
@@ -28,6 +29,15 @@ const ExpenseCategory = (props) => {
     setExpenseToShare(expense);
     setShareModalVisible(true);
   };
+
+  useEffect(() => {
+    if (showSuccessMessage || showErrorMessage) {
+      setTimeout(() => {
+        setShowSuccessMessage(false);
+        setShowErrorMessage(false);
+      }, 3000);
+    }
+  }, [showSuccessMessage, showErrorMessage]);
 
   const handleDelete = async (expense) => {
     try {
@@ -89,9 +99,7 @@ const ExpenseCategory = (props) => {
           headers: { Authorization: `Bearer ${token}` },
         }
       );
-      if (response.ok) {
-        setShowSuccessMessage(true);
-      }
+      setShowSuccessMessage(true);
       setLoading(false);
     } catch (err) {
       setShowErrorMessage(true);

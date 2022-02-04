@@ -35,6 +35,8 @@ export const addExpenseRoute = {
         return res.status(403).json({ message: 'You need to verify your email before you can update your data' });
       }
 
+      const sharingCode = nanoid(24);
+
       const date = moment(rawDate);
       const day = date.date();
       const month = date.format('MMMM');
@@ -60,7 +62,7 @@ export const addExpenseRoute = {
               sharedBy: null,
               sharedWith: [],
               sharingPending: false,
-              sharingCode: null,
+              sharingCode,
               sharingAccepted: false,
             },
           },
@@ -84,7 +86,7 @@ export const addExpenseRoute = {
             sharedBy: null,
             sharedWith: [],
             sharingPending: false,
-            sharingCode: null,
+            sharingCode,
             sharingAccepted: false,
           },
         });

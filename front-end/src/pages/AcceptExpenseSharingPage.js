@@ -152,13 +152,13 @@ export const AcceptExpenseSharingPage = () => {
       )}
       {!sharingAccepted && !sharingDeclined && (
         <>
-          <p>{queryParams.sharedBy} wants to share an expense with you</p>
+          <p>{decodeURIComponent(queryParams.sharedBy)} wants to share an expense with you</p>
           <button onClick={acceptSharing}>Accept</button>
           <button onClick={declineSharing}>Decline</button>
         </>
       )}
 
-      {sharingAccepted && !isTrustedUser && (
+      {sharingAccepted && !isTrustedUser && !addedToTrusted && (
         <>
           <p>Add {decodeURIComponent(queryParams.sharedBy)} to your trusted contacts?</p>
           <p>This would allow them to share expenses with you without you having to approve each one via email.</p>

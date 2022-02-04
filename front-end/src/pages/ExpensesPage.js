@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import { useContext } from 'react';
-import ExpenseCard from '../components/ExpenseCard/ExpenseCard';
 import { groupBy } from 'lodash';
 
 import { ExpensesContext } from '../contexts/expensesContext';
@@ -25,9 +24,14 @@ const ExpensesPage = (props) => {
 
   return (
     <div className="container">
+      <h1 className="title">Your expenses</h1>
       {expensesCategories.map((category, index) => {
         const [type, items] = category;
-        return <ExpenseCategory key={index} category={type} expenses={items} />;
+        return (
+          <div key={index} className="expense-category-wraper">
+            <ExpenseCategory category={type} expenses={items} />
+          </div>
+        );
       })}
     </div>
   );

@@ -7,7 +7,6 @@ import moment from 'moment';
 import { useContext } from 'react';
 import { ExpensesContext } from '../contexts/expensesContext';
 
-const people = ['Silviu', 'Anca'];
 const expenseCategories = [
   'chirie',
   'caldura',
@@ -30,15 +29,36 @@ const AddExpensesPage = () => {
   const user = useUser();
   const [token] = useToken();
 
-  const { id, email, isVerified } = user;
+  const { id, email, isVerified, userName } = user;
 
   const [expenseType, setExpenseType] = useState(expenseCategories[0]);
+  const [peopleWhoCanPay, setPeopleWhoCanPay] = useState([userName]);
   const [amount, setAmount] = useState('');
   const [expenses, setExpenses] = useContext(ExpensesContext);
-  const [who, setWho] = useState(people[0]);
+  const [who, setWho] = useState(peopleWhoCanPay[0]);
   const [date, setDate] = useState(moment());
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
   const [showErrorMessage, setShowErrorMessage] = useState(false);
+
+  useEffect(() => {
+    const fetchPeopleWhoCanPay = async () => {
+      try {
+        const response = await axios.get(`/api/users/${id}/get-trusted`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+
+        if (response.data) {
+          setPeopleWhoCanPay([...peopleWhoCanPay, ...response.data.users?.map((person) => person.userName)]);
+        }
+      } catch (err) {
+        console.log(err.message);
+      }
+    };
+
+    if (peopleWhoCanPay.length <= 1) {
+      fetchPeopleWhoCanPay();
+    }
+  }, [peopleWhoCanPay]);
 
   useEffect(() => {
     if (showSuccessMessage || showErrorMessage) {
@@ -65,9 +85,8 @@ const AddExpensesPage = () => {
       );
       if (response.data) {
         setShowSuccessMessage(true);
-        setExpenses([...expenses, response.data.expense])
+        setExpenses([...expenses, response.data.expense]);
       }
-     
     } catch (err) {
       setShowErrorMessage(true);
     }
@@ -97,7 +116,7 @@ const AddExpensesPage = () => {
       <label>
         Who paid:
         <select onChange={(e) => setWho(e.target.value)} value={who}>
-          {people.map((person, idx) => (
+          {peopleWhoCanPay.map((person, idx) => (
             <option key={idx} value={person}>
               {person}
             </option>

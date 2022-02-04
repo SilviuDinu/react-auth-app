@@ -16,15 +16,20 @@ export const verifyEmailRoute = {
       return res.status(401).json({ message: 'Email verification code is incorrect' });
     }
 
-    const { _id: id, info, email } = result;
+    const { _id: id, info, email, userName } = result;
 
     await db.collection('users').updateOne({ _id: ObjectID(id) }, { $set: { isVerified: true } });
 
-    jwt.sign({ id, email, isVerified: true, info }, process.env.JWT_SECRET, { expiresIn: '2d' }, (err, token) => {
-      if (err) {
-        return res.sendStatus(500);
+    jwt.sign(
+      { id, email, userName, isVerified: true, info },
+      process.env.JWT_SECRET,
+      { expiresIn: '2d' },
+      (err, token) => {
+        if (err) {
+          return res.sendStatus(500);
+        }
+        res.status(200).json({ token });
       }
-      res.status(200).json({ token });
-    });
+    );
   },
 };
