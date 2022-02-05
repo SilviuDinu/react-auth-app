@@ -27,12 +27,12 @@ export const menuItems = [
     //   link: '/dashboard/share-expense',
     //   className: 'menu-item',
     // },
-    {
-      title: 'Your info',
-      icon: <PersonIcon color="primary" />,
-      link: '/dashboard/userinfo',
-      className: 'menu-item',
-    },
+    // {
+    //   title: 'Your info',
+    //   icon: <PersonIcon color="primary" />,
+    //   link: '/dashboard/userinfo',
+    //   className: 'menu-item',
+    // },
     {
       title: 'Your expenses',
       icon: <FormatListNumberedIcon color="primary" />,
