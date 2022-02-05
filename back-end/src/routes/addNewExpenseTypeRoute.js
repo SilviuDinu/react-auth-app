@@ -33,11 +33,19 @@ export const addNewExpenseTypeRoute = {
 
       const db = getDbConnection('react-auth-db');
 
+      // $addToSet: {
+      //   expenseTypes: {
+      //     $each: [...expenseTypes],
+      //   },
+      // },
+
+      let expenseTypesSet = Array.from(new Set([...expenseTypes]));
+
       const result = await db.collection('users').findOneAndUpdate(
         { _id: ObjectID(userId) },
         {
           $set: {
-            expenseTypes: expenseTypes
+            expenseTypes: expenseTypesSet,
           },
         },
         { returnOriginal: false }

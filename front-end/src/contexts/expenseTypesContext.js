@@ -3,7 +3,6 @@ import { useRef } from 'react';
 import { createContext, useEffect, useState } from 'react';
 import { useToken } from '../auth/useToken';
 import { useUser } from '../auth/useUser';
-import { differenceWith, isEqual } from 'lodash';
 
 const defaultValue = [
   { title: 'chirie', category: 'living' },
@@ -46,11 +45,14 @@ export const ExpenseTypesProvider = (props) => {
         if (response.data) {
           setExpenseTypes(response.data.expenseTypes);
           setDefaultExpenseTypes((defaultValues) =>
-            defaultValues.filter((defVal) => !response.data.expenseTypes.some((y) => y.title == defVal.title))
+            defaultValues.filter((defVal) => !response.data.expenseTypes.some((y) => y.title === defVal.title))
           );
           setCategories(() => {
             return Array.from(
-              new Set([...defaultExpenseTypes.map((val) => val?.category), ...response.data.expenseTypes.map((val) => val?.category)])
+              new Set([
+                ...defaultExpenseTypes.map((val) => val?.category),
+                ...response.data.expenseTypes.map((val) => val?.category),
+              ])
             );
           });
         }

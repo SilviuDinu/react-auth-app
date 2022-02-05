@@ -13,7 +13,7 @@ function SettingsPage(props) {
   const [settings, setSettings] = useState(null);
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
   const [showErrorMessage, setShowErrorMessage] = useState(false);
-  const [message, setMessage] = useState(false);
+  const [message, setMessage] = useState('');
   const [canSaveSettings, setCanSaveSettings] = useState(false);
   const [failedRequest, setFailedRequest] = useState(false);
   const firstUpdate = useRef(true);
@@ -27,16 +27,10 @@ function SettingsPage(props) {
         if (response.data) {
           const { settings: settingsValue, message } = response.data;
           setSettings(settingsValue);
-          console.log(settingsValue);
-          setShowErrorMessage(false);
-          setShowSuccessMessage(true);
-          setMessage(message);
           setFailedRequest(false);
         }
       } catch (err) {
         setShowErrorMessage(true);
-        setShowSuccessMessage(false);
-        setMessage(message);
         setFailedRequest(true);
       }
     };
@@ -72,13 +66,11 @@ function SettingsPage(props) {
       );
       if (response.data) {
         const { message } = response.data;
-        setShowErrorMessage(false);
         setShowSuccessMessage(true);
         setMessage(message);
       }
     } catch (err) {
       setShowErrorMessage(true);
-      setShowSuccessMessage(false);
       setMessage(message);
     }
   };

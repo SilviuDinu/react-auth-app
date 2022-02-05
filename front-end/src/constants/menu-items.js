@@ -3,7 +3,6 @@ import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 // import IosShareIcon from '@mui/icons-material/IosShare';
 import BarChartIcon from '@mui/icons-material/BarChart';
-import PersonIcon from '@mui/icons-material/Person';
 import FormatListNumberedIcon from '@mui/icons-material/FormatListNumbered';
 import SettingsIcon from '@mui/icons-material/Settings';
 

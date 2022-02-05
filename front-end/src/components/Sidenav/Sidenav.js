@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
@@ -16,7 +16,6 @@ import { menuItems } from '../../constants/menu-items';
 import { useHistory } from 'react-router-dom';
 import MenuIcon from '@mui/icons-material/Menu';
 import { useUser } from '../../auth/useUser';
-import { useRef } from 'react';
 
 const drawerWidth = 300;
 

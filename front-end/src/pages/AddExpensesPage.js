@@ -1,21 +1,30 @@
 import axios from 'axios';
 import { useState, useEffect } from 'react';
-import { Link, useHistory } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { useToken } from '../auth/useToken';
 import { useUser } from '../auth/useUser';
 import moment from 'moment';
 import { useContext } from 'react';
 import { ExpensesContext } from '../contexts/expensesContext';
 import { ExpenseTypesContext } from '../contexts/expenseTypesContext';
+import { isEqual } from 'lodash';
 
 const AddExpensesPage = () => {
   const user = useUser();
   const [token] = useToken();
 
   const { id, email, isVerified, userName } = user;
-  const { expenseTypes } = useContext(ExpenseTypesContext);
+  const { expenseTypes, setExpenseTypes, defaultExpenseTypes, categories, setCategories } =
+    useContext(ExpenseTypesContext);
 
-  const [selectedExpenseType, setSelectedExpenseType] = useState(expenseTypes[0]?.title);
+  const [selectedExpenseType, setSelectedExpenseType] = useState(
+    expenseTypes[0]?.title || defaultExpenseTypes[0].title
+  );
+  const [selectedCategory, setSelectedCategory] = useState(
+    expenseTypes[0]?.category || defaultExpenseTypes[0].category
+  );
+  const [manualInput, setManualInput] = useState(false);
+
   const [peopleWhoCanPay, setPeopleWhoCanPay] = useState([userName]);
   const [amount, setAmount] = useState('');
   const [expenses, setExpenses] = useContext(ExpensesContext);
@@ -53,12 +62,22 @@ const AddExpensesPage = () => {
     }
   }, [showSuccessMessage, showErrorMessage]);
 
+  useEffect(() => {
+    if (!manualInput) {
+      setSelectedExpenseType(expenseTypes[0]?.title || defaultExpenseTypes[0].title);
+      setSelectedCategory(expenseTypes[0]?.category || defaultExpenseTypes[0].category);
+    } else {
+      setSelectedExpenseType('');
+      setSelectedCategory('');
+    }
+  }, [manualInput]);
+
   const saveChanges = async () => {
     try {
       const response = await axios.put(
         `/api/expenses/${id}/add-new`,
         {
-          category: expenseTypes.find((expense) => expense.title === selectedExpenseType).category,
+          category: selectedCategory,
           title: selectedExpenseType,
           amount,
           who,
@@ -71,10 +90,46 @@ const AddExpensesPage = () => {
       if (response.data) {
         setShowSuccessMessage(true);
         setExpenses([...expenses, response.data.expense]);
+
+        const obj = { title: selectedExpenseType, category: selectedCategory };
+        console.log(obj);
+        const canAddNewExpenseType =
+          selectedExpenseType && selectedCategory && !expenseTypes.some((type) => isEqual(type, obj));
+
+        if (canAddNewExpenseType) {
+          setExpenseTypes([...expenseTypes, obj]);
+
+          addExpenseType(obj);
+        }
       }
     } catch (err) {
       setShowErrorMessage(true);
     }
+  };
+
+  const addExpenseType = async (obj) => {
+    console.log('inside addExpenseType');
+    try {
+      await axios.post(
+        `/api/expense-types/${id}/add-expense-type`,
+        {
+          expenseTypes: [...expenseTypes, obj],
+        },
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      setShowSuccessMessage(true);
+    } catch (err) {
+      setShowErrorMessage(true);
+      console.log(err.message);
+    }
+  };
+
+  const handleSelectExpenseName = (e) => {
+    setSelectedExpenseType(e.target.value);
+    const selectedCat = expenseTypes.find((type) => type.title === e.target.value).category;
+    setSelectedCategory(selectedCat);
   };
 
   if (!expenseTypes.length) {
@@ -104,16 +159,58 @@ const AddExpensesPage = () => {
         Amount (RON):
         <input type="text" onChange={(e) => setAmount(e.target.value)} value={amount} placeholder="100.00" />
       </label>
-      <label>
-        Expense type / category:
-        <select onChange={(e) => setSelectedExpenseType(e.target.value)} value={selectedExpenseType}>
-          {expenseTypes?.map((expense, idx) => (
-            <option key={idx} value={expense.title}>
-              {expense.title}
-            </option>
-          ))}
-        </select>
-      </label>
+
+      {!manualInput ? (
+        <label>
+          Choose expense name from the list or{' '}
+          <button className="btn-like-link" onClick={(e) => setManualInput(!manualInput)}>
+            Add a new one
+          </button>
+          <select onChange={handleSelectExpenseName} defaultValue={selectedExpenseType}>
+            {expenseTypes?.map((expense, idx) => (
+              <option key={idx} value={expense.title}>
+                {expense.title}
+              </option>
+            ))}
+          </select>
+        </label>
+      ) : (
+        <div style={{ width: '100%' }}>
+          Type a new expense name and choose a suited category from next list or{' '}
+          <button className="btn-like-link" onClick={(e) => setManualInput(!manualInput)}>
+            choose a name from the previous list
+          </button>
+          <input type="text" value={selectedExpenseType} onChange={(e) => setSelectedExpenseType(e.target.value)} />
+        </div>
+      )}
+      {manualInput ? (
+        <>
+          <label>
+            Expense category:
+            <select
+              name="select-category"
+              defaultValue={'default'}
+              onChange={(e) => setSelectedCategory(e.target.value)}>
+              <option value="default" disabled hidden>
+                Please choose a category...
+              </option>
+              {categories?.map((category, idx) => (
+                <option key={idx} value={category}>
+                  {category}
+                </option>
+              ))}
+            </select>
+          </label>
+          <hr />
+        </>
+      ) : (
+        <>
+          <div style={{ display: 'flex', justifyContent: 'flex-start', width: '100%' }}>
+            Category: {selectedCategory}
+          </div>
+          <hr />
+        </>
+      )}
       <label>
         Who paid:
         <select onChange={(e) => setWho(e.target.value)} value={who}>
@@ -129,7 +226,7 @@ const AddExpensesPage = () => {
         <input type="date" onChange={(e) => setDate(moment(e.target.value))} value={date.format('yyyy-MM-DD')} />
       </label>
       <hr />
-      <button disabled={!amount || !date || !who || !selectedExpenseType} onClick={saveChanges}>
+      <button disabled={!amount || !date || !who || !selectedExpenseType || !selectedCategory} onClick={saveChanges}>
         Save Changes
       </button>
     </div>
