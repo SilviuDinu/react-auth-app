@@ -92,7 +92,6 @@ const AddExpensesPage = () => {
         setExpenses([...expenses, response.data.expense]);
 
         const obj = { title: selectedExpenseType, category: selectedCategory };
-        console.log(obj);
         const canAddNewExpenseType =
           selectedExpenseType && selectedCategory && !expenseTypes.some((type) => isEqual(type, obj));
 
@@ -108,7 +107,6 @@ const AddExpensesPage = () => {
   };
 
   const addExpenseType = async (obj) => {
-    console.log('inside addExpenseType');
     try {
       await axios.post(
         `/api/expense-types/${id}/add-expense-type`,

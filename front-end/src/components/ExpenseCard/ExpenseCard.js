@@ -5,8 +5,6 @@ const ExpenseCard = (props) => {
   const { amount, who, prettyDate, date, category, title, sharedWith, sharedBy } = props.expense || {};
   const { showActions = true } = props;
 
-  console.log(props.expense)
-
   const handleShare = () => {
     props.onActionClick('share', props.expense);
   };

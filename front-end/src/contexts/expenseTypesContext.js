@@ -34,8 +34,6 @@ export const ExpenseTypesProvider = (props) => {
   const firstUpdate = useRef(true);
 
   useEffect(() => {
-    console.log('1');
-
     const fetchExpenseTypes = async () => {
       try {
         const response = await axios.get(`/api/expense-types/${id}`, {
