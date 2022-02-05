@@ -59,9 +59,10 @@ export const signUpRoute = {
         to: email,
         from: 'slvalx.apps@gmail.com',
         subject: 'Please verify your email address',
-        text: `
+        text: `Hello,
+
           Thanks for signing up! In order to verify your email, please click here:
-          http://localhost:3000/verify-email/${emailVerificationString}
+          http://localhost:${process.env.PORT || 8080}/verify-email/${emailVerificationString}
         `,
       });
     } catch (err) {

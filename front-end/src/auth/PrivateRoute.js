@@ -8,8 +8,6 @@ export const PrivateRoute = (props) => {
   const user = useUser();
   const location = useLocation();
 
-  // http://localhost:3000/dashboard/accept-expense-sharing?expenseId=b0f1daf4-9ada-46d2-871e-482e87d00e00a1LTIvoGK98V0PUk4Bcya&sharingCode=fG3A3NdQX772DskB75URf&sharedBy=slvalx.apps+test3
-
   if (!user) {
     return (
       <Redirect

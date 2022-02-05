@@ -31,7 +31,7 @@ export const forgotPasswordRoute = {
             Hello there,          
 
             To reset your password, please click on this link:
-            http://localhost:3000/reset-password/${passwordResetCode}
+            http://localhost:${process.env.PORT || 8080}/reset-password/${passwordResetCode}
 
             This url is only available for 24 hours.
 

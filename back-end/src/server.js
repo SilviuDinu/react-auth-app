@@ -11,12 +11,16 @@ const app = express();
 // requests in our route handlers (as req.body)
 app.use(express.json());
 
-app.use(express.static(path.join(__dirname, '../../front-end/build/')));
+app.use(express.static(path.join(__dirname, '../../front-end/build')));
 
 // Add all the routes to our Express server
 // exported from routes/index.js
 routes.forEach((route) => {
   app[route.method](route.path, route.handler);
+});
+
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, '../../front-end/build/index.html'));
 });
 
 // Connect to the database, then start the server.

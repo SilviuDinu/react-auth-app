@@ -136,7 +136,7 @@ export const shareExpenseWithRoute = {
                 ${result.value.userName} (${result.value.email}) wants to share an expense with you.
                 Please click the link below to accept or ignore this email to refuse:
 
-                http://localhost:3000/dashboard/accept-expense-sharing?${expenseQueryParams.toString()}
+                http://localhost:${process.env.PORT || 8080}/dashboard/accept-expense-sharing?${expenseQueryParams.toString()}
 
                 Best regards,
                 Silviu

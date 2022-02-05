@@ -61,7 +61,7 @@
 .sidenav {
   display: flex;
   height: 100vh;
-  overflow: scroll initial;
+  overflow-y: initial;
 
   .menu-item {
     // color: #818181;
