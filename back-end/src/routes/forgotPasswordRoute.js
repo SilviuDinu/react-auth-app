@@ -27,8 +27,7 @@ export const forgotPasswordRoute = {
           to: email,
           from: 'slvalx.apps@gmail.com',
           subject: 'Password reset',
-          text: `
-            Hello there,          
+          text: `Hello there,          
 
             To reset your password, please click on this link:
             http://localhost:3000/reset-password/${passwordResetCode}
