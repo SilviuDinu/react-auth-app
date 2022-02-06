@@ -49,38 +49,76 @@ export const shareExpenseWithRoute = {
         return;
       }
 
-      const result = await db.collection('users').findOneAndUpdate(
-        { _id: ObjectID(userId), 'expenses.id': expenseId },
-        {
-          $set: {
-            'expenses.$.sharingPending': true,
-            'expenses.$.sharingAccepted': false,
-          },
-          $addToSet: {
-            'expenses.$.sharedWith': { email, id: userToShareWith._id, userName: userToShareWith.userName },
+      const isAlreadyShared = await db.collection('users').findOne({
+        _id: ObjectID(userId),
+        expenses: {
+          $elemMatch: {
+            id: expenseId,
+            sharedWith: {
+              $elemMatch: {
+                id: ObjectID(userToShareWith._id),
+                sharingAccepted: false,
+              },
+            },
           },
         },
-        { returnOriginal: false }
-      );
+      });
+
+      const result = isAlreadyShared
+        ? {
+            ok: 1,
+            value: isAlreadyShared,
+          }
+        : await db.collection('users').findOneAndUpdate(
+            {
+              _id: ObjectID(userId),
+              'expenses.id': expenseId,
+            },
+            {
+              $addToSet: {
+                'expenses.$.sharedWith': {
+                  email,
+                  id: userToShareWith._id,
+                  userName: userToShareWith.userName,
+                  sharingPending: true,
+                  sharingAccepted: false,
+                  sharingCode: nanoid(24),
+                },
+              },
+            },
+            { returnOriginal: false, upsert: true }
+          );
 
       if (result.ok && result.value) {
-        const { amount, who, title, category, day, month, year, date, prettyDate, sharingCode } =
-          result.value.expenses.find((expense) => expense.id === expenseId);
+        const expenseFound = result.value.expenses.find((expense) => expense.id === expenseId);
+
+        const { amount, who, title, category, day, month, year, date, prettyDate, sharedWith } = expenseFound;
+
+        const sharingIndex = sharedWith.findIndex((item) => {
+          return item.id.toString() === userToShareWith._id.toString();
+        });
+
+        const { sharingCode } = sharedWith[sharingIndex] || {};
 
         const canBypassApproval = !!userToShareWith?.usersWhoCanShareExpensesWithoutApproval?.find(
-          (user) => user.id.toString() === userId
+          (user) => user.id?.toString() === userId
         );
 
         if (canBypassApproval) {
+          sharedWith[sharingIndex].sharingPending = false;
+          sharedWith[sharingIndex].sharingAccepted = true;
+
           await db.collection('users').findOneAndUpdate(
-            { _id: ObjectID(userId), 'expenses.id': expenseId },
+            { _id: ObjectID(userId), 'expenses.id': expenseId, 'expenses.sharedWith': { $elemMatch: { sharingCode } } },
             {
               $set: {
-                'expenses.$.sharingPending': false,
-                'expenses.$.sharingAccepted': true,
+                [`expenses.$.sharedWith.${sharingIndex}.sharingPending`]: false,
+                [`expenses.$.sharedWith.${sharingIndex}.sharingAccepted`]: true,
               },
             },
-            { returnOriginal: false }
+            {
+              returnOriginal: false,
+            }
           );
 
           const sharing = await db.collection('users').findOneAndUpdate(
@@ -98,15 +136,13 @@ export const shareExpenseWithRoute = {
                   year,
                   date,
                   prettyDate,
+                  isPrimaryOwner: false,
                   sharedBy: {
                     email: result.value.email,
                     id: result.value._id,
                     userName: result.value.userName,
                   },
                   sharedWith: [],
-                  sharingPending: false,
-                  sharingCode,
-                  sharingAccepted: false,
                 },
               },
             },
@@ -136,14 +172,14 @@ export const shareExpenseWithRoute = {
                 ${result.value.userName} (${result.value.email}) wants to share an expense with you.
                 Please click the link below to accept or ignore this email to refuse:
 
-                http://localhost:${process.env.PORT || 8080}/dashboard/accept-expense-sharing?${expenseQueryParams.toString()}
+                http://localhost:${
+                  process.env.PORT || 8080
+                }/dashboard/accept-expense-sharing?${expenseQueryParams.toString()}
 
                 Best regards,
                 Silviu
               `,
             });
-
-            console.log('email sent to ', email);
           } catch (err) {
             console.log(err);
             return res.sendStatus(500);

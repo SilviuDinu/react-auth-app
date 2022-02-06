@@ -29,7 +29,7 @@ export const getSharedByRoute = {
       const db = getDbConnection('react-auth-db');
 
       const userWhoSharedWithMe = await db.collection('users').findOne({
-        expenses: { $elemMatch: { sharingCode } },
+        expenses: { $elemMatch: { sharedWith: { $elemMatch: { id: ObjectID(userId), sharingCode } } } },
       });
 
       if (!userWhoSharedWithMe) {
@@ -50,9 +50,12 @@ export const getSharedByRoute = {
         (user) => user.id === userWhoSharedWithMe._id
       );
 
-      res
-        .status(200)
-        .json({ message: 'success', sharedBy: userWhoSharedWithMe.userName, sharedById: userWhoSharedWithMe._id, isTrustedUser });
+      res.status(200).json({
+        message: 'success',
+        sharedBy: userWhoSharedWithMe.userName,
+        sharedById: userWhoSharedWithMe._id,
+        isTrustedUser,
+      });
     });
   },
 };

@@ -12,7 +12,7 @@ import ShareExpenseModal from '../components/ShareExpenseModal/ShareExpenseModal
 const ExpensesPage = (props) => {
   const user = useUser();
   const [token] = useToken();
-  const { id } = user;
+  const { id } = user || {};
   const [expenses, setExpenses] = useContext(ExpensesContext);
   const [expensesCategories, setExpensesCategories] = useState([]);
   const [shareModalVisible, setShareModalVisible] = useState(false);

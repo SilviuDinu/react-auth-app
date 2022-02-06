@@ -29,14 +29,22 @@ export const declineSharingExpenseRoute = {
         return res.status(403).json({ message: "Not allowed to update this users's data" });
       }
 
-      if (!isVerified) {
-        return res.status(403).json({ message: 'You need to verify your email before you can update your data' });
-      }
-
       const db = getDbConnection('react-auth-db');
 
       const userWhoSharedWithMe = await db.collection('users').findOne({
-        expenses: { $elemMatch: { id: expenseId, sharingCode } },
+        expenses: {
+          $elemMatch: {
+            id: expenseId,
+            sharedWith: {
+              $elemMatch: {
+                id: ObjectID(userId),
+                sharingPending: true,
+                sharingAccepted: false,
+                sharingCode: sharingCode,
+              },
+            },
+          },
+        },
       });
 
       if (!userWhoSharedWithMe) {
@@ -44,18 +52,33 @@ export const declineSharingExpenseRoute = {
         return;
       }
 
-      const updateUserWhoSharedWithMe = await db.collection('users').findOneAndUpdate(
-        { _id: ObjectID(userWhoSharedWithMe._id), 'expenses.id': expenseId },
-        {
-          $set: {
-            'expenses.$.sharingPending': false,
-            'expenses.$.sharingAccepted': false,
-            'expenses.$.sharingCode': null,
-          },
-        },
-        { returnOriginal: false }
+      const expenseFound = userWhoSharedWithMe.expenses.find(
+        (expense) => expense.id === expenseId && expense.sharedWith.some((sh) => sh.sharingCode === sharingCode)
       );
 
+      const sharingIndex = expenseFound.sharedWith.findIndex((item) => {
+        return item.id.toString() === userId.toString();
+      });
+
+      expenseFound.sharedWith[sharingIndex].sharingPending = false;
+      expenseFound.sharedWith[sharingIndex].sharingAccepted = false;
+
+      const updateUserWhoSharedWithMe = await db.collection('users').findOneAndUpdate(
+        {
+          _id: ObjectID(userWhoSharedWithMe._id),
+          'expenses.id': expenseId,
+          'expenses.sharedWith': { $elemMatch: { sharingCode: sharingCode } },
+        },
+        {
+          $set: {
+            [`expenses.$.sharedWith.${sharingIndex}.sharingPending`]: false,
+            [`expenses.$.sharedWith.${sharingIndex}.sharingAccepted`]: false,
+          },
+        },
+        {
+          returnOriginal: false,
+        }
+      );
       if (updateUserWhoSharedWithMe.ok && updateUserWhoSharedWithMe.value) {
         try {
           const result = await db.collection('users').findOne({ _id: ObjectID(userId) });

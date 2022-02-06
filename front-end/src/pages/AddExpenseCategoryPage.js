@@ -12,7 +12,7 @@ function AddExpenseCategoryPage(props) {
   const user = useUser();
   const [token] = useToken();
 
-  const { id } = user;
+  const { id } = user || {};
 
   const { expenseTypes, setExpenseTypes, defaultExpenseTypes, setDefaultExpenseTypes, categories, setCategories } =
     useContext(ExpenseTypesContext);

@@ -26,7 +26,7 @@ export const ExpenseTypesProvider = (props) => {
   const user = useUser();
   const [token] = useToken();
 
-  const { id } = user;
+  const { id } = user || {};
   const [expenseTypes, setExpenseTypes] = useState([]);
   const [defaultExpenseTypes, setDefaultExpenseTypes] = useState(defaultValue);
   const [categories, setCategories] = useState([]);

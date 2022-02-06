@@ -8,7 +8,7 @@ import { useUser } from '../auth/useUser';
 
 function SettingsPage(props) {
   const user = useUser();
-  const { id } = user;
+  const { id } = user || {};
   const [token] = useToken();
   const [settings, setSettings] = useState(null);
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);

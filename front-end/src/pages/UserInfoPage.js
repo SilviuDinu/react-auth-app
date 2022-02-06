@@ -11,7 +11,7 @@ export const UserInfoPage = () => {
   const user = useUser();
   const [token, setToken] = useToken();
 
-  const { id, info, email, isVerified } = user;
+  const { id, info, email, isVerified } = user || {};
 
   // These states are bound to the values of the text inputs
   // on the page (see JSX below).

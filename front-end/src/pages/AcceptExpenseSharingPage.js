@@ -16,7 +16,7 @@ export const AcceptExpenseSharingPage = () => {
   const user = useUser();
   const [token] = useToken();
 
-  const { id } = user;
+  const { id, userName } = user || {};
 
   const [getSharedByFailed, setGetSharedByFailed] = useState();
   const [expenses, setExpenses] = useContext(ExpensesContext);
@@ -156,7 +156,7 @@ export const AcceptExpenseSharingPage = () => {
       )}
       {!sharingAccepted && !sharingDeclined && (
         <>
-          <p>{decodeURIComponent(queryParams.sharedBy)} wants to share an expense with you</p>
+          <p>{sharedBy} wants to share an expense with you</p>
           <button onClick={acceptSharing}>Accept</button>
           <button onClick={declineSharing}>Decline</button>
         </>
@@ -164,7 +164,7 @@ export const AcceptExpenseSharingPage = () => {
 
       {sharingAccepted && !isTrustedUser && !addedToTrusted && (
         <>
-          <p>Add {decodeURIComponent(sharedBy)} to your trusted contacts?</p>
+          <p>Add {sharedBy} to your trusted contacts?</p>
           <p>This would allow them to share expenses with you without you having to approve each one via email.</p>
           <button onClick={addToTrusted}>Add {decodeURIComponent(queryParams.sharedBy)}</button>
           <button

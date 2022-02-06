@@ -10,7 +10,7 @@ export const ExpensesProvider = (props) => {
   const user = useUser();
   const [token] = useToken();
 
-  const { id } = user;
+  const { id } = user || {};
   const [expenses, setExpenses] = useState(defaultValue);
   const expensesLength = useRef(-1);
   const firstUpdate = useRef(true);

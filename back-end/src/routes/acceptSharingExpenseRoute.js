@@ -30,14 +30,21 @@ export const acceptSharingExpenseRoute = {
         return res.status(403).json({ message: "Not allowed to update this users's data" });
       }
 
-      if (!isVerified) {
-        return res.status(403).json({ message: 'You need to verify your email before you can update your data' });
-      }
-
       const db = getDbConnection('react-auth-db');
 
       const userWhoSharedWithMe = await db.collection('users').findOne({
-        expenses: { $elemMatch: { id: expenseId, sharingCode: sharingCodeParam } },
+        expenses: {
+          $elemMatch: {
+            id: expenseId,
+            sharedWith: {
+              $elemMatch: {
+                id: ObjectID(userId),
+                sharingAccepted: false,
+                sharingCode: sharingCodeParam,
+              },
+            },
+          },
+        },
       });
 
       if (!userWhoSharedWithMe) {
@@ -46,15 +53,20 @@ export const acceptSharingExpenseRoute = {
       }
 
       try {
-        const { amount, who, title, category, day, month, year, date, prettyDate, sharingCode } =
-          userWhoSharedWithMe.expenses.find(
-            (expense) => expense.id === expenseId && expense.sharingCode === sharingCodeParam
-          );
+        const expenseFound = userWhoSharedWithMe.expenses.find(
+          (expense) => expense.id === expenseId && expense.sharedWith.some((sh) => sh.sharingCode === sharingCodeParam)
+        );
+
+        const { amount, who, title, category, day, month, year, date, prettyDate, sharedWith } = expenseFound;
+
+        const sharingIndex = sharedWith.findIndex((item) => {
+          return item.id.toString() === userId.toString();
+        });
 
         const result = await db.collection('users').findOneAndUpdate(
           { _id: ObjectID(userId) },
           {
-            $push: {
+            $addToSet: {
               expenses: {
                 id: expenseId,
                 amount,
@@ -66,37 +78,43 @@ export const acceptSharingExpenseRoute = {
                 year,
                 date,
                 prettyDate,
+                isPrimaryOwner: false,
                 sharedBy: {
                   email: userWhoSharedWithMe.email,
                   id: userWhoSharedWithMe._id,
                   userName: userWhoSharedWithMe.userName,
                 },
                 sharedWith: [],
-                sharingPending: false,
-                sharingCode,
-                sharingAccepted: false,
               },
             },
           },
           { returnOriginal: false, upsert: true }
         );
 
+        sharedWith[sharingIndex].sharingPending = false;
+        sharedWith[sharingIndex].sharingAccepted = true;
+
         const updateUserWhoSharedWithMe = await db.collection('users').findOneAndUpdate(
-          { _id: ObjectID(userWhoSharedWithMe._id), 'expenses.id': expenseId },
+          {
+            _id: ObjectID(userWhoSharedWithMe._id),
+            'expenses.id': expenseId,
+            'expenses.sharedWith': { $elemMatch: { sharingCode: sharingCodeParam } },
+          },
           {
             $set: {
-              'expenses.$.sharingPending': false,
-              'expenses.$.sharingAccepted': true,
+              [`expenses.$.sharedWith.${sharingIndex}.sharingPending`]: false,
+              [`expenses.$.sharedWith.${sharingIndex}.sharingAccepted`]: true,
             },
           },
-          { returnOriginal: false }
+          {
+            returnOriginal: false,
+          }
         );
 
         if (updateUserWhoSharedWithMe.ok && updateUserWhoSharedWithMe.value && result.ok && result.value) {
           res.status(200).json({
             status: 'sharing accepted successfully',
             expense: {
-              id: expenseId,
               amount,
               who,
               title,
@@ -111,10 +129,6 @@ export const acceptSharingExpenseRoute = {
                 id: userWhoSharedWithMe._id,
                 userName: userWhoSharedWithMe.userName,
               },
-              sharedWith: [],
-              sharingPending: false,
-              sharingCode,
-              sharingAccepted: false,
             },
           });
           await sendEmail({

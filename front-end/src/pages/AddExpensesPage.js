@@ -13,7 +13,7 @@ const AddExpensesPage = () => {
   const user = useUser();
   const [token] = useToken();
 
-  const { id, email, isVerified, userName } = user;
+  const { id, email, isVerified, userName } = user || {};
   const { expenseTypes, setExpenseTypes, defaultExpenseTypes, categories, setCategories } =
     useContext(ExpenseTypesContext);
 
