@@ -24,7 +24,7 @@ export const PrivateRoute = (props) => {
     }
   );
 
-  if (!user || !isAuthenticated) {
+  if (!user || !isAuthenticated || !localStorage.getItem('token')) {
     return (
       <Redirect
         to={{
