@@ -3,7 +3,6 @@ import { useRef } from 'react';
 import { useState } from 'react';
 import ExpenseCard from '../ExpenseCard/ExpenseCard';
 import IosShareIcon from '@mui/icons-material/IosShare';
-import PersonAddIcon from '@mui/icons-material/PersonAdd';
 
 const ShareExpenseModal = (props) => {
   const { visible } = props;

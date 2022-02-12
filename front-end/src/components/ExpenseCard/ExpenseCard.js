@@ -1,8 +1,10 @@
 import IosShareIcon from '@mui/icons-material/IosShare';
 import DeleteIcon from '@mui/icons-material/Delete';
+import ReceiptIcon from '@mui/icons-material/Receipt';
+import Tooltip from '@mui/material/Tooltip';
 
 const ExpenseCard = (props) => {
-  const { amount, who, prettyDate, date, category, title, sharedWith, sharedBy } = props.expense || {};
+  const { amount, who, prettyDate, date, category, title, hasReceipt, sharedBy } = props.expense || {};
   const { showActions = true } = props;
 
   const handleShare = () => {
@@ -11,6 +13,10 @@ const ExpenseCard = (props) => {
 
   const handleDelete = () => {
     props.onActionClick('delete', props.expense);
+  };
+
+  const handleDownloadReceipt = () => {
+    props.onActionClick('receipt', props.expense);
   };
 
   return (
@@ -32,11 +38,22 @@ const ExpenseCard = (props) => {
         <div className="expense-card-bottom">
           <div className="expense-card-actions">
             <div className="expense-card-action action share" onClick={handleShare}>
-              <IosShareIcon color="primary" />
+              <Tooltip title="Share expense">
+                <IosShareIcon color="primary" />
+              </Tooltip>
             </div>
             <div className="expense-card-action action delete" onClick={handleDelete}>
-              <DeleteIcon className="delete-icon" color="primary" />
+              <Tooltip title="Delete expense">
+                <DeleteIcon className="delete-icon" color="primary" />
+              </Tooltip>
             </div>
+            {hasReceipt && (
+              <div className="expense-card-action action download-receipt" onClick={handleDownloadReceipt}>
+                <Tooltip title="Download receipt">
+                  <ReceiptIcon className="receipt-icon" color="primary" />
+                </Tooltip>
+              </div>
+            )}
           </div>
         </div>
       )}

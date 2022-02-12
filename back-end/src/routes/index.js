@@ -9,6 +9,7 @@ import { forgotPasswordRoute } from './forgotPasswordRoute';
 import { getExpensesRoute } from './getExpensesRoute';
 import { getExpenseTypesRoute } from './getExpenseTypesRoute';
 import { getMutuallyTrustedUsersRoute } from './getMutuallyTrustedUsersRoute';
+import { getReceiptRoute } from './getReceiptRoute';
 import { getSettingsRoute } from './getSettingsRoute';
 import { getSharedByRoute } from './getSharedByRoute';
 import { getUsersRoute } from './getUsersRoute';
@@ -41,5 +42,6 @@ export const routes = [
   setSettingsRoute,
   deleteExpenseRoute,
   getMutuallyTrustedUsersRoute,
-  getExpenseTypesRoute
+  getExpenseTypesRoute,
+  getReceiptRoute
 ];

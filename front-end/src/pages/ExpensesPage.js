@@ -8,6 +8,7 @@ import { useRef } from 'react';
 import { useUser } from '../auth/useUser';
 import { useToken } from '../auth/useToken';
 import ShareExpenseModal from '../components/ShareExpenseModal/ShareExpenseModal';
+import downloadFile from '../util/download';
 
 const ExpensesPage = (props) => {
   const user = useUser();
@@ -44,6 +45,9 @@ const ExpensesPage = (props) => {
         break;
       case 'delete':
         handleDelete(expense);
+        break;
+      case 'receipt':
+        handleReceipt(expense);
         break;
       default:
         return expense;
@@ -108,6 +112,18 @@ const ExpensesPage = (props) => {
   const handleShare = (expense) => {
     setExpenseToShare(expense);
     setShareModalVisible(true);
+  };
+
+  const handleReceipt = async (expense) => {
+    try {
+      const response = await axios.get(`/api/expenses/${id}/get-receipt/${expense.id}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      downloadFile(response.data.receiptData, `${expense.day}-${expense.month}-${expense.year}_${expense.category}.pdf`);
+      setShowSuccessMessage(true);
+    } catch (err) {
+      setShowErrorMessage(true);
+    }
   };
 
   if (!expensesCategories?.length && expensesCategories?.length !== 0) {

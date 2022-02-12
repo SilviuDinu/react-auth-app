@@ -39,7 +39,38 @@ export const getExpensesRoute = {
 
       res.status(200).json({
         message: 'Expenses retrieved successfully',
-        expenses: result.expenses,
+        expenses: result.expenses.map((exp) => {
+          const {
+            id,
+            amount,
+            who,
+            title,
+            category,
+            day,
+            month,
+            year,
+            date,
+            prettyDate,
+            sharedBy,
+            hasReceipt,
+            isPrimaryOwner,
+          } = exp;
+          return {
+            id,
+            amount,
+            who,
+            title,
+            category,
+            day,
+            month,
+            year,
+            date,
+            prettyDate,
+            hasReceipt,
+            isPrimaryOwner,
+            sharedBy,
+          };
+        }),
       });
     });
   },

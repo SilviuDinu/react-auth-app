@@ -12,7 +12,7 @@ export const addExpenseRoute = {
     const { authorization } = req.headers;
     const { userId } = req.params;
 
-    const { date: rawDate, amount, who, title, category } = req.body;
+    const { date: rawDate, amount, who, title, category, receiptData } = req.body;
 
     if (!authorization) {
       return res.status(401).json({ message: 'No auth token sent' });
@@ -61,6 +61,8 @@ export const addExpenseRoute = {
               isPrimaryOwner: true,
               sharedBy: null,
               sharedWith: [],
+              receiptData,
+              hasReceipt: !!receiptData,
             },
           },
         },
@@ -81,6 +83,7 @@ export const addExpenseRoute = {
             year,
             date: rawDate,
             prettyDate,
+            hasReceipt: !!receiptData,
             isPrimaryOwner: true,
           },
         });

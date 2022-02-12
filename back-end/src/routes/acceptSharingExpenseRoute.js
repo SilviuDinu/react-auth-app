@@ -24,7 +24,7 @@ export const acceptSharingExpenseRoute = {
         return res.status(401).json({ message: 'Unable to verify token' });
       }
 
-      const { id, isVerified } = decoded;
+      const { id } = decoded;
 
       if (id !== userId) {
         return res.status(403).json({ message: "Not allowed to update this users's data" });
@@ -57,7 +57,8 @@ export const acceptSharingExpenseRoute = {
           (expense) => expense.id === expenseId && expense.sharedWith.some((sh) => sh.sharingCode === sharingCodeParam)
         );
 
-        const { amount, who, title, category, day, month, year, date, prettyDate, sharedWith } = expenseFound;
+        const { amount, who, title, category, day, month, hasReceipt, year, date, prettyDate, sharedWith } =
+          expenseFound;
 
         const sharingIndex = sharedWith.findIndex((item) => {
           return item.id.toString() === userId.toString();
@@ -78,6 +79,7 @@ export const acceptSharingExpenseRoute = {
                 year,
                 date,
                 prettyDate,
+                hasReceipt,
                 isPrimaryOwner: false,
                 sharedBy: {
                   email: userWhoSharedWithMe.email,
@@ -124,6 +126,7 @@ export const acceptSharingExpenseRoute = {
               year,
               date,
               prettyDate,
+              hasReceipt,
               sharedBy: {
                 email: userWhoSharedWithMe.email,
                 id: userWhoSharedWithMe._id,

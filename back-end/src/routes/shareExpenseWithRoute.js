@@ -92,7 +92,7 @@ export const shareExpenseWithRoute = {
       if (result.ok && result.value) {
         const expenseFound = result.value.expenses.find((expense) => expense.id === expenseId);
 
-        const { amount, who, title, category, day, month, year, date, prettyDate, sharedWith } = expenseFound;
+        const { amount, who, title, category, hasReceipt, day, month, year, date, prettyDate, sharedWith } = expenseFound;
 
         const sharingIndex = sharedWith.findIndex((item) => {
           return item.id.toString() === userToShareWith._id.toString();
@@ -136,6 +136,7 @@ export const shareExpenseWithRoute = {
                   year,
                   date,
                   prettyDate,
+                  hasReceipt,
                   isPrimaryOwner: false,
                   sharedBy: {
                     email: result.value.email,

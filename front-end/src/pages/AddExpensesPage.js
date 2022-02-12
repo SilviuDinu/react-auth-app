@@ -8,6 +8,14 @@ import { useContext } from 'react';
 import { ExpensesContext } from '../contexts/expensesContext';
 import { ExpenseTypesContext } from '../contexts/expenseTypesContext';
 import { isEqual } from 'lodash';
+import DragAndDrop from '../components/DragAndDrop/DragAndDrop';
+import { useRef } from 'react';
+
+const config = {
+  allowedFileFormats: ['application/pdf'],
+  fileSizeMBLimit: 20,
+  filesLimit: 1,
+};
 
 const AddExpensesPage = () => {
   const user = useUser();
@@ -32,6 +40,8 @@ const AddExpensesPage = () => {
   const [date, setDate] = useState(moment());
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
   const [showErrorMessage, setShowErrorMessage] = useState(false);
+  const [receiptData, setReceiptData] = useState('');
+  const fetchedRef = useRef(false);
 
   useEffect(() => {
     const fetchPeopleWhoCanPay = async () => {
@@ -40,15 +50,18 @@ const AddExpensesPage = () => {
           headers: { Authorization: `Bearer ${token}` },
         });
 
+        fetchedRef.current = true;
+
         if (response.data) {
           setPeopleWhoCanPay([...peopleWhoCanPay, ...response.data.users?.map((person) => person.userName)]);
         }
       } catch (err) {
+        fetchedRef.current = true;
         console.log(err.message);
       }
     };
 
-    if (peopleWhoCanPay.length <= 1) {
+    if (peopleWhoCanPay.length <= 1 && !fetchedRef.current) {
       fetchPeopleWhoCanPay();
     }
   }, [peopleWhoCanPay]);
@@ -82,6 +95,7 @@ const AddExpensesPage = () => {
           amount,
           who,
           date,
+          receiptData,
         },
         {
           headers: { Authorization: `Bearer ${token}` },
@@ -90,6 +104,7 @@ const AddExpensesPage = () => {
       if (response.data) {
         setShowSuccessMessage(true);
         setExpenses([...expenses, response.data.expense]);
+        console.log(response.data.expense)
 
         const obj = { title: selectedExpenseType, category: selectedCategory };
         const canAddNewExpenseType =
@@ -223,6 +238,10 @@ const AddExpensesPage = () => {
         Date:
         <input type="date" onChange={(e) => setDate(moment(e.target.value))} value={date.format('yyyy-MM-DD')} />
       </label>
+      <hr />
+      <div className="drag-and-drop-area" style={{ width: '100%' }}>
+        <DragAndDrop data={receiptData} setData={setReceiptData} config={config} style={{ padding: 18 }}></DragAndDrop>
+      </div>
       <hr />
       <button disabled={!amount || !date || !who || !selectedExpenseType || !selectedCategory} onClick={saveChanges}>
         Save Changes
