@@ -100,7 +100,7 @@ export const Dashboard = () => {
               return {
                 name,
                 date: groupedItems[key].prettyDate,
-                amount: groupedItems[key].reduce((acc, item) => (acc += parseFloat(item.amount)), 0),
+                amount: groupedItems[key].reduce((acc, item) => (acc += parseFloat(item.amount)), 0).toFixed(2),
               };
             });
 
@@ -141,7 +141,7 @@ export const Dashboard = () => {
               return {
                 name,
                 date: groupedItems[key].prettyDate,
-                amount: groupedItems[key].reduce((acc, item) => (acc += parseFloat(item.amount)), 0),
+                amount: groupedItems[key].reduce((acc, item) => (acc += parseFloat(item.amount)), 0).toFixed(2),
               };
             });
 

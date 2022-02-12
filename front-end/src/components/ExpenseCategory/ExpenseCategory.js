@@ -12,7 +12,7 @@ const ExpenseCategory = (props) => {
         <div className="expense-category-summary-info">
           <span className="expense-category-field">Category: {category}</span>
           <span className="expense-category-field">
-            Total: {expenses.reduce((acc, item) => (acc += parseFloat(item.amount)), 0)} RON
+            Total: {expenses.reduce((acc, item) => (acc += parseFloat(item.amount)), 0).toFixed(2)} RON
           </span>
         </div>
         <button onClick={() => setShowExpenses(!showExpenses)}>{showExpenses ? 'Hide details' : 'Show details'}</button>

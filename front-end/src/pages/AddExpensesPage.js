@@ -92,7 +92,7 @@ const AddExpensesPage = () => {
         {
           category: selectedCategory,
           title: selectedExpenseType,
-          amount,
+          amount: parseFloat(amount).toFixed(2),
           who,
           date,
           receiptData,
