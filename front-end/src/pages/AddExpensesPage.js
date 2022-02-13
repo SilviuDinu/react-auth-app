@@ -105,7 +105,6 @@ const AddExpensesPage = () => {
       if (response.data) {
         setShowSuccessMessage(true);
         setExpenses([...expenses, response.data.expense]);
-        console.log(response.data.expense);
 
         const obj = { title: selectedExpenseType, category: selectedCategory };
         const canAddNewExpenseType =

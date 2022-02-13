@@ -4,6 +4,7 @@ import React from 'react';
 import { useState } from 'react';
 import { useEffect } from 'react';
 import { useContext } from 'react';
+import { Link } from 'react-router-dom';
 import LineChart from '../components/LineChart/LineChart';
 import { ExpensesContext } from '../contexts/expensesContext';
 import { capitalize } from '../util/helpers';
@@ -36,6 +37,21 @@ export const Dashboard = () => {
         return `${item.day}_${item.month}_${item.year}`;
     }
   };
+
+  if (!expensesCategories.length && !expensesByTitles.length) {
+    return (
+      <div className="container">
+        <h2>Sorry, you do not have any data to display</h2>
+        <h2>
+          Please go to{' '}
+          <b>
+            <Link to="/dashboard/add-expense">Add expense</Link>
+          </b>{' '}
+          page to add your first expense.
+        </h2>
+      </div>
+    );
+  }
 
   return (
     <div className="container">
@@ -100,7 +116,7 @@ export const Dashboard = () => {
               return {
                 name,
                 date: groupedItems[key].prettyDate,
-                amount: groupedItems[key].reduce((acc, item) => (acc += parseFloat(item.amount)), 0).toFixed(2),
+                amount: Number(groupedItems[key].reduce((acc, item) => (acc += parseFloat(item.amount)), 0).toFixed(2)),
               };
             });
 
@@ -141,7 +157,7 @@ export const Dashboard = () => {
               return {
                 name,
                 date: groupedItems[key].prettyDate,
-                amount: groupedItems[key].reduce((acc, item) => (acc += parseFloat(item.amount)), 0).toFixed(2),
+                amount: Number(groupedItems[key].reduce((acc, item) => (acc += parseFloat(item.amount)), 0).toFixed(2)),
               };
             });
 
