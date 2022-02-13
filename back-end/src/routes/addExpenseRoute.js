@@ -63,6 +63,7 @@ export const addExpenseRoute = {
               sharedWith: [],
               receiptData,
               hasReceipt: !!receiptData,
+              isOriginal: true
             },
           },
         },

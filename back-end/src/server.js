@@ -9,8 +9,8 @@ const app = express();
 
 // This allows us to access the body of POST/PUT
 // requests in our route handlers (as req.body)
-app.use(express.json({ limit: '20mb' }));
-app.use(express.urlencoded({ limit: '20mb' }));
+app.use(express.json({ limit: '5mb' }));
+app.use(express.urlencoded({ limit: '5mb' }));
 
 app.use(express.static(path.join(__dirname, '../../front-end/build')));
 
