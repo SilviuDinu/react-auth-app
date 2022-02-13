@@ -14,6 +14,7 @@ export const Dashboard = () => {
   const [expensesCategories, setExpensesCategories] = useState([]);
   const [expensesByTitles, setExpensesByTitles] = useState([]);
   const [showStatsByExpenseTitle, setShowStatsByExpenseTitle] = useState(false);
+  const [includeShared, setIncludeShared] = useState(true);
   const [showStatsByExpenseCategory, setShowStatsByExpenseCategory] = useState(true);
   const [timeInterval, setTimeInterval] = useState('month');
 
@@ -78,6 +79,15 @@ export const Dashboard = () => {
             />
           </div>
           <div className="control">
+            <label htmlFor="include-shared">Include shared expenses to total amount</label>
+            <input
+              type="checkbox"
+              name="include-shared"
+              checked={includeShared}
+              onChange={(e) => setIncludeShared(!includeShared)}
+            />
+          </div>
+          <div className="control">
             <label htmlFor="show-by-week-month">Choose the interval for your charts</label>
             <select name="show-by-week-month" defaultValue={'month'} onChange={(e) => setTimeInterval(e.target.value)}>
               <option value="month">Per Month</option>
@@ -91,7 +101,13 @@ export const Dashboard = () => {
           expensesCategories?.map((expense, index) => {
             const [category, items] = expense;
 
-            const sortedItems = items.sort((a, b) => {
+            const filteredItems = includeShared ? items : items.filter((item) => !item.sharedBy)
+
+            if (!filteredItems.length) {
+              return;
+            }
+
+            const sortedItems = filteredItems.sort((a, b) => {
               return moment(a.date).diff(moment(b.date), 'seconds');
             });
 
@@ -132,7 +148,13 @@ export const Dashboard = () => {
           expensesByTitles?.map((expense, index) => {
             const [title, items] = expense;
 
-            const sortedItems = items.sort((a, b) => {
+            const filteredItems = includeShared ? items : items.filter((item) => !item.sharedBy)
+
+            if (!filteredItems.length) {
+              return;
+            }
+
+            const sortedItems = filteredItems.sort((a, b) => {
               return moment(a.date).diff(moment(b.date), 'seconds');
             });
 

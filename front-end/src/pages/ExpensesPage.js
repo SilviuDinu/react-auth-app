@@ -22,6 +22,8 @@ const ExpensesPage = (props) => {
   const [loading, setLoading] = useState(false);
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
   const [showErrorMessage, setShowErrorMessage] = useState(false);
+  const [includeShared, setIncludeShared] = useState(true);
+
   const timeoutPromise = useRef();
 
   useEffect(() => {
@@ -119,7 +121,10 @@ const ExpensesPage = (props) => {
       const response = await axios.get(`/api/expenses/${id}/get-receipt/${expense.id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      downloadFile(response.data.receiptData, `${expense.day}-${expense.month}-${expense.year}_${expense.category}.pdf`);
+      downloadFile(
+        response.data.receiptData,
+        `${expense.day}-${expense.month}-${expense.year}_${expense.category}.pdf`
+      );
       setShowSuccessMessage(true);
     } catch (err) {
       setShowErrorMessage(true);
@@ -137,12 +142,24 @@ const ExpensesPage = (props) => {
   return (
     <div className="container">
       <h1 className="title">Your expenses</h1>
+      <div className="options">
+        <label htmlFor="include-shared">Include shared expenses to total amount</label>
+        <input
+          type="checkbox"
+          name="include-shared"
+          checked={includeShared}
+          onChange={(e) => setIncludeShared(!includeShared)}
+        />
+      </div>
       {expensesCategories.map((expenseType, index) => {
         const [category, items] = expenseType;
         return (
-          <div key={index} className="expense-category-wraper">
-            <ExpenseCategory category={category} expenses={items} handleCardActions={handleCardActions} />
-          </div>
+          <ExpenseCategory
+            key={index}
+            category={category}
+            expenses={includeShared ? items : items.filter((item) => !item.sharedBy)}
+            handleCardActions={handleCardActions}
+          />
         );
       })}
 
