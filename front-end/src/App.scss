@@ -19,7 +19,7 @@
 
 .chart-area {
   margin-top: 5em;
-  margin-bottom: 2em;
+  margin-bottom: 5em;
   width: 1000px;
   height: 400px;
 
@@ -37,6 +37,16 @@
 
   .chart-title {
     text-align: center;
+  }
+
+  .chart-control {
+    div {
+      margin: 8px;
+      padding: 8px;
+      border-radius: 10px;
+      background-color: #f1f1f1;
+      cursor: pointer;
+    }
   }
 }
 

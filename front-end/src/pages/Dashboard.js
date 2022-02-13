@@ -17,6 +17,7 @@ export const Dashboard = () => {
   const [includeShared, setIncludeShared] = useState(true);
   const [showStatsByExpenseCategory, setShowStatsByExpenseCategory] = useState(true);
   const [timeInterval, setTimeInterval] = useState('month');
+  const [limitTo, setLimitTo] = useState(null);
 
   useEffect(() => {
     const categoryGroups = groupBy(expenses, 'category');
@@ -101,7 +102,7 @@ export const Dashboard = () => {
           expensesCategories?.map((expense, index) => {
             const [category, items] = expense;
 
-            const filteredItems = includeShared ? items : items.filter((item) => !item.sharedBy)
+            const filteredItems = includeShared ? items : items.filter((item) => !item.sharedBy);
 
             if (!filteredItems.length) {
               return;
@@ -139,7 +140,24 @@ export const Dashboard = () => {
             return (
               <div className="chart-area" key={index}>
                 <h2 className="chart-title">{capitalize(category)}</h2>
-                <LineChart data={data} />
+                <LineChart data={!limitTo ? data : data.slice(Math.max(data.length - limitTo, 0))} />
+                {timeInterval === 'day' && (
+                  <div
+                    className="chart-control"
+                    style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-evenly' }}>
+                    <div onClick={(e) => setLimitTo(null)}>All days this month</div>
+                    {data.length && <div onClick={(e) => setLimitTo(3)}>7 days</div>}
+                  </div>
+                )}
+                {timeInterval === 'month' && (
+                  <div
+                    className="chart-control"
+                    style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-evenly' }}>
+                    <div onClick={(e) => setLimitTo(null)}>All months in current year</div>
+                    {data.length > 5 && <div onClick={(e) => setLimitTo(6)}>6 months</div>}
+                    {data.length > 2 && <div onClick={(e) => setLimitTo(3)}>3 months</div>}
+                  </div>
+                )}
               </div>
             );
           })}
@@ -148,7 +166,7 @@ export const Dashboard = () => {
           expensesByTitles?.map((expense, index) => {
             const [title, items] = expense;
 
-            const filteredItems = includeShared ? items : items.filter((item) => !item.sharedBy)
+            const filteredItems = includeShared ? items : items.filter((item) => !item.sharedBy);
 
             if (!filteredItems.length) {
               return;
@@ -186,7 +204,24 @@ export const Dashboard = () => {
             return (
               <div className="chart-area" key={index}>
                 <h2 className="chart-title">{capitalize(title)}</h2>
-                <LineChart data={data} />
+                <LineChart data={!limitTo ? data : data.slice(Math.max(data.length - limitTo, 0))} />
+                {timeInterval === 'day' && (
+                  <div
+                    className="chart-control"
+                    style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-evenly' }}>
+                    <div onClick={(e) => setLimitTo(null)}>All days this month</div>
+                    {data.length > 6 && <div onClick={(e) => setLimitTo(7)}>7 days</div>}
+                  </div>
+                )}
+                {timeInterval === 'month' && (
+                  <div
+                    className="chart-control"
+                    style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-evenly' }}>
+                    <div onClick={(e) => setLimitTo(null)}>All months in current year</div>
+                    {data.length > 5 && <div onClick={(e) => setLimitTo(6)}>6 months</div>}
+                    {data.length > 2 && <div onClick={(e) => setLimitTo(3)}>3 months</div>}
+                  </div>
+                )}
               </div>
             );
           })}
