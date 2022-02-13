@@ -10,6 +10,7 @@ import { ExpenseTypesContext } from '../contexts/expenseTypesContext';
 import { isEqual } from 'lodash';
 import DragAndDrop from '../components/DragAndDrop/DragAndDrop';
 import { useRef } from 'react';
+import FieldWithTooltip from '../components/FieldWIthTooltip/FieldWithTooltip';
 
 const config = {
   allowedFileFormats: ['application/pdf'],
@@ -104,7 +105,7 @@ const AddExpensesPage = () => {
       if (response.data) {
         setShowSuccessMessage(true);
         setExpenses([...expenses, response.data.expense]);
-        console.log(response.data.expense)
+        console.log(response.data.expense);
 
         const obj = { title: selectedExpenseType, category: selectedCategory };
         const canAddNewExpenseType =
@@ -199,7 +200,10 @@ const AddExpensesPage = () => {
       {manualInput ? (
         <>
           <label>
-            Expense category:
+            <FieldWithTooltip
+              tooltip="Can't find the right category? Go to Add Expense Category page to add a new category"
+              title="Expense category:"
+            />
             <select
               name="select-category"
               defaultValue={'default'}
