@@ -24,11 +24,6 @@ const Sidenav = React.memo((props) => {
   const { window } = props;
   const [mobileOpen, setMobileOpen] = useState(false);
   const history = useHistory();
-  // const renders = useRef(0);
-
-  // useEffect(() => {
-  //   console.log(renders.current++);
-  // });
 
   const [selected, setSelected] = useState(null);
 
