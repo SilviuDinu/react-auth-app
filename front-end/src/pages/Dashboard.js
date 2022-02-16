@@ -1,3 +1,4 @@
+import { Divider } from '@mui/material';
 import { groupBy, chain } from 'lodash';
 import moment from 'moment';
 import React from 'react';
@@ -13,6 +14,7 @@ export const Dashboard = () => {
   const [expenses] = useContext(ExpensesContext);
   const [expensesCategories, setExpensesCategories] = useState([]);
   const [expensesByTitles, setExpensesByTitles] = useState([]);
+  const [expensesTotalPerMonth, setExpensesTotalPerMonth] = useState({});
   const [showStatsByExpenseTitle, setShowStatsByExpenseTitle] = useState(false);
   const [includeShared, setIncludeShared] = useState(true);
   const [showStatsByExpenseCategory, setShowStatsByExpenseCategory] = useState(true);
@@ -73,6 +75,36 @@ export const Dashboard = () => {
     setLoading(true);
     const expenseTypesGroups = groupBy(expenses, 'title');
     setExpensesByTitles([...Object.entries(expenseTypesGroups)]);
+    setLoading(false);
+  }, [expenses]);
+
+  useEffect(() => {
+    setLoading(true);
+    const filteredItems = includeShared ? expenses : expenses.filter((item) => !item.sharedBy);
+
+    if (!filteredItems.length) {
+      return;
+    }
+
+    const sortedItems = filteredItems.sort((a, b) => {
+      return moment(a.date).diff(moment(b.date), 'seconds');
+    });
+
+    const groupedItems = chain(sortedItems)
+      .groupBy((item) => `${item.month}_${item.year}`)
+      .value();
+
+    const data = Object.keys(groupedItems).map((key) => {
+      const splitted = key.split('_');
+
+      return {
+        name: `${splitted[0]} ${splitted[1]}`,
+        date: groupedItems[key].prettyDate,
+        amount: Number(groupedItems[key].reduce((acc, item) => (acc += parseFloat(item.amount)), 0).toFixed(2)),
+      };
+    });
+
+    setExpensesTotalPerMonth(data);
     setLoading(false);
   }, [expenses]);
 
@@ -151,6 +183,14 @@ export const Dashboard = () => {
               </div>
             </div>
 
+            {/* <div className="chart-wrapper"> */}
+            {!!expensesTotalPerMonth && (
+              <div className="chart-area">
+                <h2 className="chart-title">Total spent each month</h2>
+                <LineChart data={expensesTotalPerMonth} />
+              </div>
+            )}
+
             {showStatsByExpenseCategory &&
               expensesCategories?.map((expense, index) => {
                 if (chartLoading[index]) {
@@ -200,23 +240,25 @@ export const Dashboard = () => {
                   <div className="chart-area" key={index}>
                     <h2 className="chart-title">{capitalize(category)}</h2>
                     <LineChart data={data} />
-                    {timeInterval === 'day' && (
-                      <div
-                        className="chart-control"
-                        style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-evenly' }}>
-                        <div onClick={(e) => handleLimitTo(category, null, index)}>All days</div>
-                        {data.length > 6 && <div onClick={(e) => handleLimitTo(category, 7, index)}>7 days</div>}
-                      </div>
-                    )}
-                    {timeInterval === 'month' && (
-                      <div
-                        className="chart-control"
-                        style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-evenly' }}>
-                        <div onClick={(e) => handleLimitTo(category, null, index)}>All months</div>
-                        {data.length > 5 && <div onClick={(e) => handleLimitTo(category, 6, index)}>6 months</div>}
-                        {data.length > 2 && <div onClick={(e) => handleLimitTo(category, 3, index)}>3 months</div>}
-                      </div>
-                    )}
+                    <div className="chart-controls">
+                      {timeInterval === 'day' && (
+                        <div
+                          className="chart-control"
+                          style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-evenly' }}>
+                          <div onClick={(e) => handleLimitTo(category, null, index)}>All days</div>
+                          {data.length > 6 && <div onClick={(e) => handleLimitTo(category, 7, index)}>7 days</div>}
+                        </div>
+                      )}
+                      {timeInterval === 'month' && (
+                        <div
+                          className="chart-control"
+                          style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-evenly' }}>
+                          <div onClick={(e) => handleLimitTo(category, null, index)}>All months</div>
+                          {data.length > 5 && <div onClick={(e) => handleLimitTo(category, 6, index)}>6 months</div>}
+                          {data.length > 2 && <div onClick={(e) => handleLimitTo(category, 3, index)}>3 months</div>}
+                        </div>
+                      )}
+                    </div>
                   </div>
                 );
               })}
@@ -266,30 +308,35 @@ export const Dashboard = () => {
                   <div className="chart-area" key={index}>
                     <h2 className="chart-title">{capitalize(title)}</h2>
                     <LineChart data={!limitTo ? data : data.slice(Math.max(data.length - limitTo, 0))} />
-                    {timeInterval === 'day' && (
-                      <div
-                        className="chart-control"
-                        style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-evenly' }}>
-                        <div onClick={(e) => handleLimitTo(title, null, index, 'title')}>All days</div>
-                        {data.length > 6 && <div onClick={(e) => handleLimitTo(title, 7, index, 'title')}>7 days</div>}
-                      </div>
-                    )}
-                    {timeInterval === 'month' && (
-                      <div
-                        className="chart-control"
-                        style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-evenly' }}>
-                        <div onClick={(e) => handleLimitTo(title, null, index, 'title')}>All months</div>
-                        {data.length > 5 && (
-                          <div onClick={(e) => handleLimitTo(title, 6, index, 'title')}>6 months</div>
-                        )}
-                        {data.length > 2 && (
-                          <div onClick={(e) => handleLimitTo(title, 3, index, 'title')}>3 months</div>
-                        )}
-                      </div>
-                    )}
+                    <div className="chart-controls">
+                      {timeInterval === 'day' && (
+                        <div
+                          className="chart-control"
+                          style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-evenly' }}>
+                          <div onClick={(e) => handleLimitTo(title, null, index, 'title')}>All days</div>
+                          {data.length > 6 && (
+                            <div onClick={(e) => handleLimitTo(title, 7, index, 'title')}>7 days</div>
+                          )}
+                        </div>
+                      )}
+                      {timeInterval === 'month' && (
+                        <div
+                          className="chart-control"
+                          style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-evenly' }}>
+                          <div onClick={(e) => handleLimitTo(title, null, index, 'title')}>All months</div>
+                          {data.length > 5 && (
+                            <div onClick={(e) => handleLimitTo(title, 6, index, 'title')}>6 months</div>
+                          )}
+                          {data.length > 2 && (
+                            <div onClick={(e) => handleLimitTo(title, 3, index, 'title')}>3 months</div>
+                          )}
+                        </div>
+                      )}
+                    </div>
                   </div>
                 );
               })}
+            {/* </div> */}
           </>
         )}
       </div>

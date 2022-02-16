@@ -9,6 +9,7 @@ import { useUser } from '../auth/useUser';
 import { useToken } from '../auth/useToken';
 import ShareExpenseModal from '../components/ShareExpenseModal/ShareExpenseModal';
 import downloadFile from '../util/download';
+import moment from 'moment';
 
 const ExpensesPage = (props) => {
   const user = useUser();
@@ -23,6 +24,7 @@ const ExpensesPage = (props) => {
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
   const [showErrorMessage, setShowErrorMessage] = useState(false);
   const [includeShared, setIncludeShared] = useState(true);
+  const [totalThisMonth, setTotalThisMonth] = useState(0);
 
   const timeoutPromise = useRef();
 
@@ -38,6 +40,18 @@ const ExpensesPage = (props) => {
   useEffect(() => {
     const categoryGroups = groupBy(expenses, 'category');
     setExpensesCategories([...Object.entries(categoryGroups)]);
+  }, [expenses]);
+
+  useEffect(() => {
+    const total = expenses.reduce((acm, item) => {
+      const now = moment();
+      if (now.isSame(moment(item.date), 'month')) {
+        return (acm += Number(parseFloat(item.amount).toFixed(2)));
+      }
+      return acm;
+    }, 0);
+
+    setTotalThisMonth(total);
   }, [expenses]);
 
   const handleCardActions = (action, expense) => {
@@ -150,6 +164,7 @@ const ExpensesPage = (props) => {
           checked={includeShared}
           onChange={(e) => setIncludeShared(!includeShared)}
         />
+        <div>Total this month: {totalThisMonth} RON</div>
       </div>
       {expensesCategories.map((expenseType, index) => {
         const [category, items] = expenseType;
