@@ -164,91 +164,97 @@ const AddExpensesPage = () => {
   return (
     <div className="container">
       <h1>Hello {email}</h1>
-      {!isVerified && <div className="fail">You won't be able to make any changes until you verify your email.</div>}
-      {showSuccessMessage && <div className="success">Successfully saved record!</div>}
-      {showErrorMessage && <div className="fail">Uh oh... something went wrong and we couldn't save changes</div>}
-      <h2>{date.format('MMMM YYYY')}</h2>
-      <label>
-        Amount (RON):
-        <input type="text" onChange={(e) => setAmount(e.target.value)} value={amount} placeholder="100.00" />
-      </label>
-
-      {!manualInput ? (
+      <div className="add-expense">
+        {!isVerified && <div className="fail">You won't be able to make any changes until you verify your email.</div>}
+        {showSuccessMessage && <div className="success">Successfully saved record!</div>}
+        {showErrorMessage && <div className="fail">Uh oh... something went wrong and we couldn't save changes</div>}
+        <h2>{date.format('MMMM YYYY')}</h2>
         <label>
-          Choose expense name from the list or{' '}
-          <button className="btn-like-link" onClick={(e) => setManualInput(!manualInput)}>
-            Add a new one
-          </button>
-          <select onChange={handleSelectExpenseName} defaultValue={selectedExpenseType}>
-            {expenseTypes?.map((expense, idx) => (
-              <option key={idx} value={expense.title}>
-                {expense.title}
-              </option>
-            ))}
-          </select>
+          Amount (RON):
+          <input type="text" onChange={(e) => setAmount(e.target.value)} value={amount} placeholder="100.00" />
         </label>
-      ) : (
-        <div style={{ width: '100%' }}>
-          Type a new expense name and choose a suited category from next list or{' '}
-          <button className="btn-like-link" onClick={(e) => setManualInput(!manualInput)}>
-            choose a name from the previous list
-          </button>
-          <input type="text" value={selectedExpenseType} onChange={(e) => setSelectedExpenseType(e.target.value)} />
-        </div>
-      )}
-      {manualInput ? (
-        <>
+
+        {!manualInput ? (
           <label>
-            <FieldWithTooltip
-              tooltip="Can't find the right category? Go to Add Expense Category page to add a new category"
-              title="Expense category:"
-            />
-            <select
-              name="select-category"
-              defaultValue={'default'}
-              onChange={(e) => setSelectedCategory(e.target.value)}>
-              <option value="default" disabled hidden>
-                Please choose a category...
-              </option>
-              {categories?.map((category, idx) => (
-                <option key={idx} value={category}>
-                  {category}
+            Choose expense name from the list or{' '}
+            <button className="btn-like-link" onClick={(e) => setManualInput(!manualInput)}>
+              Add a new one
+            </button>
+            <select onChange={handleSelectExpenseName} defaultValue={selectedExpenseType}>
+              {expenseTypes?.map((expense, idx) => (
+                <option key={idx} value={expense.title}>
+                  {expense.title}
                 </option>
               ))}
             </select>
           </label>
-          <hr />
-        </>
-      ) : (
-        <>
-          <div style={{ display: 'flex', justifyContent: 'flex-start', width: '100%' }}>
-            Category: {selectedCategory}
+        ) : (
+          <div style={{ width: '100%' }}>
+            Type a new expense name and choose a suited category from next list or{' '}
+            <button className="btn-like-link" onClick={(e) => setManualInput(!manualInput)}>
+              choose a name from the previous list
+            </button>
+            <input type="text" value={selectedExpenseType} onChange={(e) => setSelectedExpenseType(e.target.value)} />
           </div>
-          <hr />
-        </>
-      )}
-      <label>
-        Who paid:
-        <select onChange={(e) => setWho(e.target.value)} value={who}>
-          {peopleWhoCanPay.map((person, idx) => (
-            <option key={idx} value={person}>
-              {person}
-            </option>
-          ))}
-        </select>
-      </label>
-      <label>
-        Date:
-        <input type="date" onChange={(e) => setDate(moment(e.target.value))} value={date.format('yyyy-MM-DD')} />
-      </label>
-      <hr />
-      <div className="drag-and-drop-area" style={{ width: '100%' }}>
-        <DragAndDrop data={receiptData} setData={setReceiptData} config={config} style={{ padding: 18 }}></DragAndDrop>
+        )}
+        {manualInput ? (
+          <>
+            <label>
+              <FieldWithTooltip
+                tooltip="Can't find the right category? Go to Add Expense Category page to add a new category"
+                title="Expense category:"
+              />
+              <select
+                name="select-category"
+                defaultValue={'default'}
+                onChange={(e) => setSelectedCategory(e.target.value)}>
+                <option value="default" disabled hidden>
+                  Please choose a category...
+                </option>
+                {categories?.map((category, idx) => (
+                  <option key={idx} value={category}>
+                    {category}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <hr />
+          </>
+        ) : (
+          <>
+            <div style={{ display: 'flex', justifyContent: 'flex-start', width: '100%' }}>
+              Category: {selectedCategory}
+            </div>
+            <hr />
+          </>
+        )}
+        <label>
+          Who paid:
+          <select onChange={(e) => setWho(e.target.value)} value={who}>
+            {peopleWhoCanPay.map((person, idx) => (
+              <option key={idx} value={person}>
+                {person}
+              </option>
+            ))}
+          </select>
+        </label>
+        <label>
+          Date:
+          <input type="date" onChange={(e) => setDate(moment(e.target.value))} value={date.format('yyyy-MM-DD')} />
+        </label>
+        <hr />
+        <div className="drag-and-drop-area" style={{ width: '100%' }}>
+          <DragAndDrop
+            data={receiptData}
+            setData={setReceiptData}
+            config={config}
+            style={{ padding: 18 }}></DragAndDrop>
+        </div>
+        <hr />
+        <button disabled={!amount || !date || !who || !selectedExpenseType || !selectedCategory} onClick={saveChanges}>
+          Save Changes
+        </button>
       </div>
-      <hr />
-      <button disabled={!amount || !date || !who || !selectedExpenseType || !selectedCategory} onClick={saveChanges}>
-        Save Changes
-      </button>
     </div>
   );
 };

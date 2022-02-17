@@ -53,7 +53,7 @@ select {
 }
 
 hr {
-    width: 100%;
+  width: 100%;
 }
 
 input {
@@ -86,9 +86,9 @@ button {
     text-align: center;
 
     &.block {
-        display: block;
-        width: 100%;
-        margin-top: 16px;
+      display: block;
+      width: 100%;
+      margin-top: 16px;
     }
   }
 }
@@ -122,7 +122,7 @@ button {
 .content-container {
   border-radius: 8px;
   //   min-width: 300px;
-  padding: 32px;
+  // padding: 32px;
   //   margin-top: 32px;
   width: 100%;
 

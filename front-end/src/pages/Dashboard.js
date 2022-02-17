@@ -183,160 +183,168 @@ export const Dashboard = () => {
               </div>
             </div>
 
-            {/* <div className="chart-wrapper"> */}
-            {!!expensesTotalPerMonth && (
-              <div className="chart-area">
-                <h2 className="chart-title">Total spent each month</h2>
-                <LineChart data={expensesTotalPerMonth} />
-              </div>
-            )}
+            <div
+              className="chart-wrapper"
+              style={{
+                display: 'flex',
+                flexWrap: 'wrap',
+                alignItems: 'center',
+                justifyContent: 'center',
+                width: '100%',
+              }}>
+              {!!expensesTotalPerMonth && (
+                <div className="chart-area">
+                  <h2 className="chart-title">Total spent each month</h2>
+                  <LineChart data={expensesTotalPerMonth} />
+                </div>
+              )}
 
-            {showStatsByExpenseCategory &&
-              expensesCategories?.map((expense, index) => {
-                if (chartLoading[index]) {
-                  return <h3 key={index}>Loading...</h3>;
-                }
-
-                const [category, items] = expense;
-
-                const filteredItems = includeShared ? items : items.filter((item) => !item.sharedBy);
-
-                if (!filteredItems.length) {
-                  return;
-                }
-
-                const sortedItems = filteredItems.sort((a, b) => {
-                  return moment(a.date).diff(moment(b.date), 'seconds');
-                });
-
-                const groupedItems = chain(sortedItems)
-                  .groupBy((item) => getTimeInterval(item))
-                  .value();
-
-                const data = Object.keys(groupedItems).map((key) => {
-                  let name;
-
-                  if (key.indexOf('_') > -1) {
-                    const splitted = key.split('_');
-                    if (splitted.length > 2) {
-                      name = `${splitted[0]} ${splitted[1]} ${splitted[2]}`;
-                    } else {
-                      name = `${splitted[0]} ${splitted[1]}`;
-                    }
-                  } else {
-                    name = key;
+              {showStatsByExpenseCategory &&
+                expensesCategories?.map((expense, index) => {
+                  if (chartLoading[index]) {
+                    return <h3 key={index}>Loading...</h3>;
                   }
 
-                  return {
-                    name,
-                    date: groupedItems[key].prettyDate,
-                    amount: Number(
-                      groupedItems[key].reduce((acc, item) => (acc += parseFloat(item.amount)), 0).toFixed(2)
-                    ),
-                  };
-                });
+                  const [category, items] = expense;
 
-                return (
-                  <div className="chart-area" key={index}>
-                    <h2 className="chart-title">{capitalize(category)}</h2>
-                    <LineChart data={data} />
-                    <div className="chart-controls">
-                      {timeInterval === 'day' && (
-                        <div
-                          className="chart-control"
-                          style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-evenly' }}>
-                          <div onClick={(e) => handleLimitTo(category, null, index)}>All days</div>
-                          {data.length > 6 && <div onClick={(e) => handleLimitTo(category, 7, index)}>7 days</div>}
-                        </div>
-                      )}
-                      {timeInterval === 'month' && (
-                        <div
-                          className="chart-control"
-                          style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-evenly' }}>
-                          <div onClick={(e) => handleLimitTo(category, null, index)}>All months</div>
-                          {data.length > 5 && <div onClick={(e) => handleLimitTo(category, 6, index)}>6 months</div>}
-                          {data.length > 2 && <div onClick={(e) => handleLimitTo(category, 3, index)}>3 months</div>}
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                );
-              })}
+                  const filteredItems = includeShared ? items : items.filter((item) => !item.sharedBy);
 
-            {showStatsByExpenseTitle &&
-              expensesByTitles?.map((expense, index) => {
-                const [title, items] = expense;
-
-                const filteredItems = includeShared ? items : items.filter((item) => !item.sharedBy);
-
-                if (!filteredItems.length) {
-                  return;
-                }
-
-                const sortedItems = filteredItems.sort((a, b) => {
-                  return moment(a.date).diff(moment(b.date), 'seconds');
-                });
-
-                const groupedItems = chain(sortedItems)
-                  .groupBy((item) => getTimeInterval(item))
-                  .value();
-
-                const data = Object.keys(groupedItems).map((key) => {
-                  let name;
-
-                  if (key.indexOf('_') > -1) {
-                    const splitted = key.split('_');
-                    if (splitted.length > 2) {
-                      name = `${splitted[0]} ${splitted[1]} ${splitted[2]}`;
-                    } else {
-                      name = `${splitted[0]} ${splitted[1]}`;
-                    }
-                  } else {
-                    name = key;
+                  if (!filteredItems.length) {
+                    return;
                   }
 
-                  return {
-                    name,
-                    date: groupedItems[key].prettyDate,
-                    amount: Number(
-                      groupedItems[key].reduce((acc, item) => (acc += parseFloat(item.amount)), 0).toFixed(2)
-                    ),
-                  };
-                });
+                  const sortedItems = filteredItems.sort((a, b) => {
+                    return moment(a.date).diff(moment(b.date), 'seconds');
+                  });
 
-                return (
-                  <div className="chart-area" key={index}>
-                    <h2 className="chart-title">{capitalize(title)}</h2>
-                    <LineChart data={!limitTo ? data : data.slice(Math.max(data.length - limitTo, 0))} />
-                    <div className="chart-controls">
-                      {timeInterval === 'day' && (
-                        <div
-                          className="chart-control"
-                          style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-evenly' }}>
-                          <div onClick={(e) => handleLimitTo(title, null, index, 'title')}>All days</div>
-                          {data.length > 6 && (
-                            <div onClick={(e) => handleLimitTo(title, 7, index, 'title')}>7 days</div>
-                          )}
-                        </div>
-                      )}
-                      {timeInterval === 'month' && (
-                        <div
-                          className="chart-control"
-                          style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-evenly' }}>
-                          <div onClick={(e) => handleLimitTo(title, null, index, 'title')}>All months</div>
-                          {data.length > 5 && (
-                            <div onClick={(e) => handleLimitTo(title, 6, index, 'title')}>6 months</div>
-                          )}
-                          {data.length > 2 && (
-                            <div onClick={(e) => handleLimitTo(title, 3, index, 'title')}>3 months</div>
-                          )}
-                        </div>
-                      )}
+                  const groupedItems = chain(sortedItems)
+                    .groupBy((item) => getTimeInterval(item))
+                    .value();
+
+                  const data = Object.keys(groupedItems).map((key) => {
+                    let name;
+
+                    if (key.indexOf('_') > -1) {
+                      const splitted = key.split('_');
+                      if (splitted.length > 2) {
+                        name = `${splitted[0]} ${splitted[1].substring(0, 3)} ${splitted[2]}`;
+                      } else {
+                        name = `${splitted[0]} ${splitted[1]}`;
+                      }
+                    } else {
+                      name = key;
+                    }
+
+                    return {
+                      name,
+                      date: groupedItems[key].prettyDate,
+                      amount: Number(
+                        groupedItems[key].reduce((acc, item) => (acc += parseFloat(item.amount)), 0).toFixed(2)
+                      ),
+                    };
+                  });
+
+                  return (
+                    <div className="chart-area" key={index}>
+                      <h2 className="chart-title">{capitalize(category)}</h2>
+                      <LineChart data={data} />
+                      <div className="chart-controls">
+                        {timeInterval === 'day' && (
+                          <div
+                            className="chart-control"
+                            style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-evenly' }}>
+                            <div onClick={(e) => handleLimitTo(category, null, index)}>All days</div>
+                            {data.length > 6 && <div onClick={(e) => handleLimitTo(category, 7, index)}>7 days</div>}
+                          </div>
+                        )}
+                        {timeInterval === 'month' && (
+                          <div
+                            className="chart-control"
+                            style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-evenly' }}>
+                            <div onClick={(e) => handleLimitTo(category, null, index)}>All months</div>
+                            {data.length > 5 && <div onClick={(e) => handleLimitTo(category, 6, index)}>6 months</div>}
+                            {data.length > 2 && <div onClick={(e) => handleLimitTo(category, 3, index)}>3 months</div>}
+                          </div>
+                        )}
+                      </div>
                     </div>
-                  </div>
-                );
-              })}
-            {/* </div> */}
+                  );
+                })}
+
+              {showStatsByExpenseTitle &&
+                expensesByTitles?.map((expense, index) => {
+                  const [title, items] = expense;
+
+                  const filteredItems = includeShared ? items : items.filter((item) => !item.sharedBy);
+
+                  if (!filteredItems.length) {
+                    return;
+                  }
+
+                  const sortedItems = filteredItems.sort((a, b) => {
+                    return moment(a.date).diff(moment(b.date), 'seconds');
+                  });
+
+                  const groupedItems = chain(sortedItems)
+                    .groupBy((item) => getTimeInterval(item))
+                    .value();
+
+                  const data = Object.keys(groupedItems).map((key) => {
+                    let name;
+
+                    if (key.indexOf('_') > -1) {
+                      const splitted = key.split('_');
+                      if (splitted.length > 2) {
+                        name = `${splitted[0]} ${splitted[1].substring(0, 3)} ${splitted[2]}`;
+                      } else {
+                        name = `${splitted[0]} ${splitted[1]}`;
+                      }
+                    } else {
+                      name = key;
+                    }
+
+                    return {
+                      name,
+                      date: groupedItems[key].prettyDate,
+                      amount: Number(
+                        groupedItems[key].reduce((acc, item) => (acc += parseFloat(item.amount)), 0).toFixed(2)
+                      ),
+                    };
+                  });
+
+                  return (
+                    <div className="chart-area" key={index}>
+                      <h2 className="chart-title">{capitalize(title)}</h2>
+                      <LineChart data={!limitTo ? data : data.slice(Math.max(data.length - limitTo, 0))} />
+                      <div className="chart-controls">
+                        {timeInterval === 'day' && (
+                          <div
+                            className="chart-control"
+                            style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-evenly' }}>
+                            <div onClick={(e) => handleLimitTo(title, null, index, 'title')}>All days</div>
+                            {data.length > 6 && (
+                              <div onClick={(e) => handleLimitTo(title, 7, index, 'title')}>7 days</div>
+                            )}
+                          </div>
+                        )}
+                        {timeInterval === 'month' && (
+                          <div
+                            className="chart-control"
+                            style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-evenly' }}>
+                            <div onClick={(e) => handleLimitTo(title, null, index, 'title')}>All months</div>
+                            {data.length > 5 && (
+                              <div onClick={(e) => handleLimitTo(title, 6, index, 'title')}>6 months</div>
+                            )}
+                            {data.length > 2 && (
+                              <div onClick={(e) => handleLimitTo(title, 3, index, 'title')}>3 months</div>
+                            )}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
+            </div>
           </>
         )}
       </div>
