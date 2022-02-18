@@ -89,7 +89,7 @@ const Sidenav = React.memo((props) => {
             width: { sm: `calc(100% - ${drawerWidth}px)` },
             ml: { sm: `${drawerWidth}px` },
           }}>
-          <Toolbar className="header-wrapper">
+          <Toolbar className="header-wrapper" style={{ backgroundColor: '#fff', color: '#000' }}>
             <IconButton
               color="inherit"
               aria-label="open drawer"

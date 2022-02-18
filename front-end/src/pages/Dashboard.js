@@ -1,4 +1,3 @@
-import { Divider } from '@mui/material';
 import { groupBy, chain } from 'lodash';
 import moment from 'moment';
 import React from 'react';
