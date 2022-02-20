@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useContext } from 'react';
 import { groupBy } from 'lodash';
 import axios from 'axios';
@@ -9,12 +9,12 @@ import { useUser } from '../auth/useUser';
 import { useToken } from '../auth/useToken';
 import ShareExpenseModal from '../components/ShareExpenseModal/ShareExpenseModal';
 import downloadFile from '../util/download';
-import moment from 'moment';
+import { getFilteredItems, getTotalThisMonth } from '../util/helpers';
 
 const ExpensesPage = (props) => {
   const user = useUser();
   const [token] = useToken();
-  const { id } = user || {};
+  const { id, userName } = user || {};
   const [expenses, setExpenses] = useContext(ExpensesContext);
   const [expensesCategories, setExpensesCategories] = useState([]);
   const [shareModalVisible, setShareModalVisible] = useState(false);
@@ -23,10 +23,13 @@ const ExpensesPage = (props) => {
   const [loading, setLoading] = useState(false);
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
   const [showErrorMessage, setShowErrorMessage] = useState(false);
-  const [includeShared, setIncludeShared] = useState(true);
-  const [totalThisMonth, setTotalThisMonth] = useState(0);
+  const [filters, setFilters] = useState({ includeShared: true, paidByMeOnly: false });
 
   const timeoutPromise = useRef();
+
+  const memoizedFilteredItems = useMemo(() => {
+    return getFilteredItems(expenses, filters, user);
+  }, [expenses, filters, user]);
 
   useEffect(() => {
     if (showSuccessMessage || showErrorMessage) {
@@ -38,21 +41,9 @@ const ExpensesPage = (props) => {
   }, [showSuccessMessage, showErrorMessage]);
 
   useEffect(() => {
-    const categoryGroups = groupBy(expenses, 'category');
+    const categoryGroups = groupBy(memoizedFilteredItems, 'category');
     setExpensesCategories([...Object.entries(categoryGroups)]);
-  }, [expenses]);
-
-  useEffect(() => {
-    const total = expenses.reduce((acm, item) => {
-      const now = moment();
-      if (now.isSame(moment(item.date), 'month')) {
-        return (acm += Number(parseFloat(item.amount).toFixed(2)));
-      }
-      return acm;
-    }, 0);
-
-    setTotalThisMonth(total);
-  }, [expenses]);
+  }, [memoizedFilteredItems]);
 
   const handleCardActions = (action, expense) => {
     switch (action) {
@@ -157,14 +148,25 @@ const ExpensesPage = (props) => {
     <div className="container">
       <h1 className="title">Your expenses</h1>
       <div className="options">
-        <label htmlFor="include-shared">Include shared expenses to total amount</label>
-        <input
-          type="checkbox"
-          name="include-shared"
-          checked={includeShared}
-          onChange={(e) => setIncludeShared(!includeShared)}
-        />
-        <div>Total this month: {totalThisMonth} RON</div>
+        <div className="option">
+          <label htmlFor="include-shared">Include shared expenses to total amount</label>
+          <input
+            type="checkbox"
+            name="include-shared"
+            checked={filters.includeShared}
+            onChange={(e) => setFilters({ ...filters, includeShared: !filters.includeShared })}
+          />
+        </div>
+        <div className="option">
+          <label htmlFor="paid-by-me">Show only expenses paid by me</label>
+          <input
+            type="checkbox"
+            name="paid-by-me"
+            checked={filters.paidByMeOnly}
+            onChange={(e) => setFilters({ ...filters, paidByMeOnly: !filters.paidByMeOnly })}
+          />
+        </div>
+        <div className="option">Total this month: {getTotalThisMonth(memoizedFilteredItems, null, user)} RON</div>
       </div>
       {expensesCategories.map((expenseType, index) => {
         const [category, items] = expenseType;
@@ -172,7 +174,7 @@ const ExpensesPage = (props) => {
           <ExpenseCategory
             key={index}
             category={category}
-            expenses={includeShared ? items : items.filter((item) => !item.sharedBy)}
+            expenses={items}
             handleCardActions={handleCardActions}
           />
         );

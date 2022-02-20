@@ -3,24 +3,31 @@ import moment from 'moment';
 import React from 'react';
 import { useState } from 'react';
 import { useEffect } from 'react';
+import { useMemo } from 'react';
 import { useContext } from 'react';
 import { Link } from 'react-router-dom';
+import { useUser } from '../auth/useUser';
 import LineChart from '../components/LineChart/LineChart';
 import { ExpensesContext } from '../contexts/expensesContext';
-import { capitalize } from '../util/helpers';
+import { capitalize, getFilteredItems } from '../util/helpers';
 
 export const Dashboard = () => {
+  const user = useUser();
   const [expenses] = useContext(ExpensesContext);
   const [expensesCategories, setExpensesCategories] = useState([]);
   const [expensesByTitles, setExpensesByTitles] = useState([]);
   const [expensesTotalPerMonth, setExpensesTotalPerMonth] = useState({});
   const [showStatsByExpenseTitle, setShowStatsByExpenseTitle] = useState(false);
-  const [includeShared, setIncludeShared] = useState(true);
   const [showStatsByExpenseCategory, setShowStatsByExpenseCategory] = useState(true);
   const [timeInterval, setTimeInterval] = useState('month');
   const [limitTo, setLimitTo] = useState(null);
   const [chartLoading, setChartLoading] = useState({});
   const [loading, setLoading] = useState(false);
+  const [filters, setFilters] = useState({ includeShared: true, paidByMeOnly: false });
+
+  const memoizedFilteredItems = useMemo(() => {
+    return getFilteredItems(expenses, filters, user);
+  }, [expenses, filters, user]);
 
   const handleLimitTo = (category, value, index, isTitle = false) => {
     turnOnLoading(index);
@@ -29,24 +36,24 @@ export const Dashboard = () => {
     switch (isTitle) {
       case true:
         if (value !== null) {
-          const groups = groupBy(expenses, 'title');
+          const groups = groupBy(memoizedFilteredItems, 'title');
           groups[category] = groups[category].slice(Math.max(groups[category].length - value, 0));
           setExpensesByTitles([...Object.entries(groups)]);
           turnOffLoading(index);
         } else {
-          const categoryGroups = groupBy(expenses, 'title');
+          const categoryGroups = groupBy(memoizedFilteredItems, 'title');
           setExpensesByTitles([...Object.entries(categoryGroups)]);
           turnOffLoading(index);
         }
         break;
       case false:
         if (value !== null) {
-          const groups = groupBy(expenses, 'category');
+          const groups = groupBy(memoizedFilteredItems, 'category');
           groups[category] = groups[category].slice(Math.max(groups[category].length - value, 0));
           setExpensesCategories([...Object.entries(groups)]);
           turnOffLoading(index);
         } else {
-          const categoryGroups = groupBy(expenses, 'category');
+          const categoryGroups = groupBy(memoizedFilteredItems, 'category');
           setExpensesCategories([...Object.entries(categoryGroups)]);
           turnOffLoading(index);
         }
@@ -64,28 +71,31 @@ export const Dashboard = () => {
   };
 
   useEffect(() => {
-    setLoading(true);
-    const categoryGroups = groupBy(expenses, 'category');
-    setExpensesCategories([...Object.entries(categoryGroups)]);
-    setLoading(false);
-  }, [expenses]);
+    if (showStatsByExpenseCategory) {
+      setLoading(true);
+      const categoryGroups = groupBy(memoizedFilteredItems, 'category');
+      setExpensesCategories([...Object.entries(categoryGroups)]);
+      setLoading(false);
+    }
+  }, [memoizedFilteredItems, showStatsByExpenseCategory]);
+
+  useEffect(() => {
+    if (showStatsByExpenseTitle) {
+      setLoading(true);
+      const expenseTypesGroups = groupBy(memoizedFilteredItems, 'title');
+      setExpensesByTitles([...Object.entries(expenseTypesGroups)]);
+      setLoading(false);
+    }
+  }, [memoizedFilteredItems, showStatsByExpenseTitle]);
 
   useEffect(() => {
     setLoading(true);
-    const expenseTypesGroups = groupBy(expenses, 'title');
-    setExpensesByTitles([...Object.entries(expenseTypesGroups)]);
-    setLoading(false);
-  }, [expenses]);
 
-  useEffect(() => {
-    setLoading(true);
-    const filteredItems = includeShared ? expenses : expenses.filter((item) => !item.sharedBy);
-
-    if (!filteredItems.length) {
+    if (!memoizedFilteredItems.length) {
       return;
     }
 
-    const sortedItems = filteredItems.sort((a, b) => {
+    const sortedItems = memoizedFilteredItems.sort((a, b) => {
       return moment(a.date).diff(moment(b.date), 'seconds');
     });
 
@@ -105,7 +115,7 @@ export const Dashboard = () => {
 
     setExpensesTotalPerMonth(data);
     setLoading(false);
-  }, [expenses]);
+  }, [memoizedFilteredItems]);
 
   const getTimeInterval = (item) => {
     switch (timeInterval) {
@@ -165,8 +175,17 @@ export const Dashboard = () => {
                 <input
                   type="checkbox"
                   name="include-shared"
-                  checked={includeShared}
-                  onChange={(e) => setIncludeShared(!includeShared)}
+                  checked={filters.includeShared}
+                  onChange={(e) => setFilters({ ...filters, includeShared: !filters.includeShared })}
+                />
+              </div>
+              <div className="control">
+                <label htmlFor="paid-by-me">Show only expenses paid by me</label>
+                <input
+                  type="checkbox"
+                  name="paid-by-me"
+                  checked={filters.paidByMeOnly}
+                  onChange={(e) => setFilters({ ...filters, paidByMeOnly: !filters.paidByMeOnly })}
                 />
               </div>
               <div className="control">
@@ -206,13 +225,11 @@ export const Dashboard = () => {
 
                   const [category, items] = expense;
 
-                  const filteredItems = includeShared ? items : items.filter((item) => !item.sharedBy);
-
-                  if (!filteredItems.length) {
+                  if (!items.length) {
                     return;
                   }
 
-                  const sortedItems = filteredItems.sort((a, b) => {
+                  const sortedItems = items.sort((a, b) => {
                     return moment(a.date).diff(moment(b.date), 'seconds');
                   });
 
@@ -274,13 +291,11 @@ export const Dashboard = () => {
                 expensesByTitles?.map((expense, index) => {
                   const [title, items] = expense;
 
-                  const filteredItems = includeShared ? items : items.filter((item) => !item.sharedBy);
-
-                  if (!filteredItems.length) {
+                  if (!items.length) {
                     return;
                   }
 
-                  const sortedItems = filteredItems.sort((a, b) => {
+                  const sortedItems = items.sort((a, b) => {
                     return moment(a.date).diff(moment(b.date), 'seconds');
                   });
 
