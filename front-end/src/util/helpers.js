@@ -24,9 +24,9 @@ export const getFilteredItems = (items, filters, user) => {
     return items;
   }
 
-  const { includeShared = true, paidByMeOnly = false } = filters || {};
+  const { includeShared = true, paidByMeOnly = false, category = 'All' } = filters || {};
 
-  if (includeShared && !paidByMeOnly) {
+  if (includeShared && !paidByMeOnly && category === 'All') {
     return items;
   }
 
@@ -38,6 +38,10 @@ export const getFilteredItems = (items, filters, user) => {
 
   if (paidByMeOnly) {
     filteredItems = (filteredItems || items).filter((item) => item.who === user?.userName);
+  }
+
+  if (category !== 'All') {
+    filteredItems = (filteredItems || items).filter((item) => item.category === category);
   }
 
   return filteredItems;

@@ -17,13 +17,14 @@ const ExpensesPage = (props) => {
   const { id, userName } = user || {};
   const [expenses, setExpenses] = useContext(ExpensesContext);
   const [expensesCategories, setExpensesCategories] = useState([]);
+  const [defaultExpenseCategories, setDefaultExpensesCategories] = useState([]);
   const [shareModalVisible, setShareModalVisible] = useState(false);
   const [expenseToShare, setExpenseToShare] = useState(null);
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(false);
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
   const [showErrorMessage, setShowErrorMessage] = useState(false);
-  const [filters, setFilters] = useState({ includeShared: true, paidByMeOnly: false });
+  const [filters, setFilters] = useState({ includeShared: true, paidByMeOnly: false, category: 'All' });
 
   const timeoutPromise = useRef();
 
@@ -44,6 +45,11 @@ const ExpensesPage = (props) => {
     const categoryGroups = groupBy(memoizedFilteredItems, 'category');
     setExpensesCategories([...Object.entries(categoryGroups)]);
   }, [memoizedFilteredItems]);
+
+  useEffect(() => {
+    const categoryGroups = groupBy(expenses, 'category');
+    setDefaultExpensesCategories([...Object.entries(categoryGroups)]);
+  }, [expenses]);
 
   const handleCardActions = (action, expense) => {
     switch (action) {
@@ -167,16 +173,28 @@ const ExpensesPage = (props) => {
           />
         </div>
         <div className="option">Total this month: {getTotalThisMonth(memoizedFilteredItems, null, user)} RON</div>
+        <div className="option">
+          {' '}
+          <select
+            name="select-category"
+            defaultValue="All"
+            onChange={(e) => setFilters({ ...filters, category: e.target.value })}>
+            <option value="All">All</option>
+            {defaultExpenseCategories?.map((group, idx) => {
+              const [category] = group;
+              return (
+                <option key={idx} value={category}>
+                  {category}
+                </option>
+              );
+            })}
+          </select>
+        </div>
       </div>
       {expensesCategories.map((expenseType, index) => {
         const [category, items] = expenseType;
         return (
-          <ExpenseCategory
-            key={index}
-            category={category}
-            expenses={items}
-            handleCardActions={handleCardActions}
-          />
+          <ExpenseCategory key={index} category={category} expenses={items} handleCardActions={handleCardActions} />
         );
       })}
 

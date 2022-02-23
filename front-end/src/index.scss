@@ -38,10 +38,16 @@ hr {
   margin: 32px 0;
 }
 
-.dark-theme {
-  background-color: rgb(11, 12, 34);
-  color: #f1f1f1;
-}
+// @media (prefers-color-scheme: dark) {
+//   .container {
+//     background-color: #242436 !important;
+//     color: #fff;
+//   }
+//   .dashboard-content,
+//   header.MuiPaper-root {
+//     background-color: #242436 !important;
+//   }
+// }
 
 button,
 input[type='text'],
