@@ -10,6 +10,7 @@ import { useToken } from '../auth/useToken';
 import ShareExpenseModal from '../components/ShareExpenseModal/ShareExpenseModal';
 import downloadFile from '../util/download';
 import { getFilteredItems, getTotalThisMonth } from '../util/helpers';
+import moment from 'moment';
 
 const ExpensesPage = (props) => {
   const user = useUser();
@@ -24,7 +25,36 @@ const ExpensesPage = (props) => {
   const [loading, setLoading] = useState(false);
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
   const [showErrorMessage, setShowErrorMessage] = useState(false);
-  const [filters, setFilters] = useState({ includeShared: true, paidByMeOnly: false, category: 'All' });
+  const [filters, setFilters] = useState({
+    includeShared: true,
+    paidByMeOnly: false,
+    category: 'All',
+    month: {
+      label: moment().format('MMMM YYYY'),
+      actualDate: moment().startOf('month').format('YYYY-MM-DD'),
+    },
+  });
+  const [months, setMonths] = useState([]);
+
+  useEffect(() => {
+    const availableMonths = [
+      ...new Map(
+        expenses
+          ?.map((item) => {
+            return {
+              label: `${item.month} ${item.year}`,
+              actualDate: moment(item.date).startOf('month').format('YYYY-MM-DD'),
+            };
+          })
+          .map((item) => [item['label'], item])
+      ).values(),
+    ];
+
+    setMonths(availableMonths);
+
+    const mostRecentAvailableMonths = availableMonths.sort((a, b) => moment(b.actualDate).diff(moment(a.actualDate)));
+    setFilters({ ...filters, month: mostRecentAvailableMonths[0] });
+  }, [expenses]);
 
   const timeoutPromise = useRef();
 
@@ -47,9 +77,9 @@ const ExpensesPage = (props) => {
   }, [memoizedFilteredItems]);
 
   useEffect(() => {
-    const categoryGroups = groupBy(expenses, 'category');
+    const categoryGroups = groupBy(memoizedFilteredItems, 'category');
     setDefaultExpensesCategories([...Object.entries(categoryGroups)]);
-  }, [expenses]);
+  }, [memoizedFilteredItems]);
 
   const handleCardActions = (action, expense) => {
     switch (action) {
@@ -172,7 +202,9 @@ const ExpensesPage = (props) => {
             onChange={(e) => setFilters({ ...filters, paidByMeOnly: !filters.paidByMeOnly })}
           />
         </div>
-        <div className="option">Total this month: {getTotalThisMonth(memoizedFilteredItems, null, user)} RON</div>
+        <div className="option">
+          Total this month: {getTotalThisMonth(memoizedFilteredItems, null, user, filters.month)} RON
+        </div>
         <div className="option">
           {' '}
           <select
@@ -190,11 +222,30 @@ const ExpensesPage = (props) => {
             })}
           </select>
         </div>
+        <div className="option">
+          {' '}
+          <select
+            name="select-month"
+            defaultValue={filters.month.label}
+            onChange={(e) => setFilters({ ...filters, month: months[e.target.value] })}>
+            {months?.map((month, idx) => (
+              <option key={idx} value={idx}>
+                {month.label}
+              </option>
+            ))}
+          </select>
+        </div>
       </div>
       {expensesCategories.map((expenseType, index) => {
         const [category, items] = expenseType;
         return (
-          <ExpenseCategory key={index} category={category} expenses={items} handleCardActions={handleCardActions} />
+          <ExpenseCategory
+            key={index}
+            category={category}
+            expenses={items}
+            month={filters.month.label}
+            handleCardActions={handleCardActions}
+          />
         );
       })}
 

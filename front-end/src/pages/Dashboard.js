@@ -57,6 +57,7 @@ export const Dashboard = () => {
           setExpensesCategories([...Object.entries(categoryGroups)]);
           turnOffLoading(index);
         }
+        break;
     }
   };
 
