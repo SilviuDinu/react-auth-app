@@ -15,10 +15,9 @@ import moment from 'moment';
 const ExpensesPage = (props) => {
   const user = useUser();
   const [token] = useToken();
-  const { id, userName } = user || {};
+  const { id } = user || {};
   const [expenses, setExpenses] = useContext(ExpensesContext);
   const [expensesCategories, setExpensesCategories] = useState([]);
-  const [defaultExpenseCategories, setDefaultExpensesCategories] = useState([]);
   const [shareModalVisible, setShareModalVisible] = useState(false);
   const [expenseToShare, setExpenseToShare] = useState(null);
   const [users, setUsers] = useState([]);
@@ -74,11 +73,6 @@ const ExpensesPage = (props) => {
   useEffect(() => {
     const categoryGroups = groupBy(memoizedFilteredItems, 'category');
     setExpensesCategories([...Object.entries(categoryGroups)]);
-  }, [memoizedFilteredItems]);
-
-  useEffect(() => {
-    const categoryGroups = groupBy(memoizedFilteredItems, 'category');
-    setDefaultExpensesCategories([...Object.entries(categoryGroups)]);
   }, [memoizedFilteredItems]);
 
   const handleCardActions = (action, expense) => {
@@ -212,7 +206,7 @@ const ExpensesPage = (props) => {
             defaultValue="All"
             onChange={(e) => setFilters({ ...filters, category: e.target.value })}>
             <option value="All">All</option>
-            {defaultExpenseCategories?.map((group, idx) => {
+            {expensesCategories?.map((group, idx) => {
               const [category] = group;
               return (
                 <option key={idx} value={category}>
@@ -236,7 +230,7 @@ const ExpensesPage = (props) => {
           </select>
         </div>
       </div>
-      {expensesCategories.map((expenseType, index) => {
+      {expensesCategories?.map((expenseType, index) => {
         const [category, items] = expenseType;
         return (
           <ExpenseCategory
