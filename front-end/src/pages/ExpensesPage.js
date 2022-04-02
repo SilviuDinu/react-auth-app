@@ -42,7 +42,7 @@ const ExpensesPage = (props) => {
           ?.map((item) => {
             return {
               label: `${item.month} ${item.year}`,
-              actualDate: moment(item.date).startOf('month').format('YYYY-MM-DD'),
+              actualDate: moment(item.date).format('YYYY-MM-DD'),
             };
           })
           .map((item) => [item['label'], item])

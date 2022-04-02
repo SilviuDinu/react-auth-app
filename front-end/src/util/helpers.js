@@ -27,7 +27,9 @@ export const getFilteredItems = (items, filters, user) => {
   const { includeShared = true, paidByMeOnly = false, category = 'All', month = null } = filters || {};
 
   if (includeShared && !paidByMeOnly && category === 'All') {
-    return month ? items.filter((item) => moment(month.actualDate).isSame(moment(item.date), 'month')) : items;
+    return month && month.actualDate
+      ? items.filter((item) => moment(month.actualDate).isSame(moment(item.date), 'month'))
+      : items;
   }
 
   let filteredItems;
@@ -44,7 +46,9 @@ export const getFilteredItems = (items, filters, user) => {
     filteredItems = (filteredItems || items).filter((item) => item.category === category);
   }
 
-  return filteredItems.filter((item) => moment(month.actualDate).isSame(moment(item.date), 'month'));
+  return month
+    ? filteredItems.filter((item) => moment(month.actualDate).isSame(moment(item.date), 'month'))
+    : filteredItems;
 };
 
 export const getTotalThisMonth = (items, filters, user, monthFilter) => {
